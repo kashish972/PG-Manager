@@ -1,5 +1,6 @@
 .container {
   padding: 0;
+  animation: fadeIn 0.4s ease forwards;
 }
 
 .header {
@@ -19,6 +20,10 @@
 
 .title {
   font-size: 2rem;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @media (max-width: 768px) {
@@ -29,23 +34,44 @@
 
 .loading, .empty {
   text-align: center;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   padding: 60px 20px;
+  animation: fadeIn 0.3s ease forwards;
 }
 
 .addBtn {
-  background: #e94560;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: white;
   border: none;
   padding: 12px 24px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.addBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
 }
 
 .addBtn:hover {
-  background: #d63850;
+  background: linear-gradient(135deg, var(--accent-hover) 0%, var(--accent) 100%);
+  box-shadow: var(--shadow-glow), var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.addBtn:hover::before {
+  left: 100%;
 }
 
 @media (max-width: 768px) {
@@ -69,21 +95,35 @@
 }
 
 .statCard {
-  background: #1f1f3a;
+  background: var(--surface);
   padding: 20px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   text-align: center;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  animation: fadeInUp 0.4s ease forwards;
+  transition: all var(--transition-normal);
+}
+
+.statCard:nth-child(1) { animation-delay: 0.1s; }
+.statCard:nth-child(2) { animation-delay: 0.15s; }
+.statCard:nth-child(3) { animation-delay: 0.2s; }
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
 }
 
 .statValue {
   display: block;
   font-size: 2rem;
   font-weight: 700;
-  color: white;
+  color: var(--text-primary);
 }
 
 .statLabel {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
 }
 
@@ -95,23 +135,27 @@
 }
 
 .filterBtn {
-  background: #1f1f3a;
-  color: #a0a0b0;
-  border: none;
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-full);
   cursor: pointer;
   font-size: 0.875rem;
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
 }
 
 .filterBtn:hover {
-  background: #2a2a4e;
+  background: var(--surface-hover);
+  border-color: var(--accent);
+  color: var(--text-primary);
 }
 
 .filterBtn.active {
-  background: #e94560;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: white;
+  border-color: transparent;
+  box-shadow: var(--shadow-glow);
 }
 
 .list {
@@ -121,12 +165,22 @@
 }
 
 .card {
-  background: #1f1f3a;
-  border-radius: 12px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  animation: fadeInUp 0.4s ease forwards;
+  transition: all var(--transition-normal);
+}
+
+.card:hover {
+  border-color: var(--surface-elevated);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
 .cardHeader {
@@ -142,47 +196,48 @@
 }
 
 .personName {
-  color: white;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .room {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   font-weight: normal;
 }
 
 .priority {
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: capitalize;
+  transition: all var(--transition-fast);
 }
 
 .priority.high {
   background: rgba(233, 69, 96, 0.15);
-  color: #e94560;
+  color: var(--accent);
 }
 
 .priority.medium {
-  background: rgba(255, 201, 71, 0.15);
-  color: #ffc947;
+  background: var(--warning-glow);
+  color: var(--warning);
 }
 
 .priority.low {
-  background: rgba(0, 217, 165, 0.15);
-  color: #00d9a5;
+  background: var(--success-glow);
+  color: var(--success);
 }
 
 .issue {
   font-size: 1.125rem;
-  color: white;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .description {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   line-height: 1.5;
   margin: 0;
@@ -196,29 +251,30 @@
 
 .status {
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: capitalize;
+  transition: all var(--transition-fast);
 }
 
 .status.pending {
-  background: rgba(255, 201, 71, 0.15);
-  color: #ffc947;
+  background: var(--warning-glow);
+  color: var(--warning);
 }
 
 .status.inProgress {
   background: rgba(99, 102, 241, 0.15);
-  color: #6366f1;
+  color: var(--info);
 }
 
 .status.resolved {
-  background: rgba(0, 217, 165, 0.15);
-  color: #00d9a5;
+  background: var(--success-glow);
+  color: var(--success);
 }
 
 .date {
-  color: #6a6a7a;
+  color: var(--text-muted);
   font-size: 0.75rem;
 }
 
@@ -227,30 +283,43 @@
   gap: 12px;
   margin-top: 8px;
   padding-top: 12px;
-  border-top: 1px solid #2a2a4e;
+  border-top: 1px solid var(--border);
 }
 
 .statusSelect {
-  background: #16213e;
-  color: white;
-  border: 1px solid #2a2a4e;
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 0.875rem;
+  transition: all var(--transition-fast);
+}
+
+.statusSelect:hover {
+  border-color: var(--accent);
+}
+
+.statusSelect:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
 .deleteBtn {
   background: transparent;
-  color: #e94560;
-  border: 1px solid #e94560;
+  color: var(--accent);
+  border: 1px solid var(--accent);
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 0.875rem;
+  transition: all var(--transition-normal);
 }
 
 .deleteBtn:hover {
-  background: #e94560;
+  background: var(--accent);
   color: white;
+  box-shadow: var(--shadow-glow);
 }

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { registerPG } from '@/actions/pg.actions';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import styles from '../login/page.module.css';
+import styles from './page.module.css';
 
 export default function RegisterPage() {
   const router = useRouter();

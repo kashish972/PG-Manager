@@ -5,12 +5,27 @@ import { usePersons, useDeletePerson } from '@/hooks/use-data';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
+import { useEffect, useState } from 'react';
+import { getBlocks } from '@/actions/block.actions';
 import styles from './page.module.css';
 
 export default function PersonsPage() {
   const { data: persons, isLoading, refetch } = usePersons();
   const { data: session } = useSession();
   const deletePerson = useDeletePerson();
+  const [blocks, setBlocks] = useState<any[]>([]);
+  const [blockMap, setBlockMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    getBlocks().then(data => {
+      setBlocks(data || []);
+      const map: Record<string, string> = {};
+      data?.forEach((b: any) => {
+        map[b._id] = b.name;
+      });
+      setBlockMap(map);
+    }).catch(() => {});
+  }, []);
 
   const canEdit = session?.user?.role !== 'member';
 
@@ -63,7 +78,12 @@ export default function PersonsPage() {
               <tbody>
                 {persons?.map((person: any) => (
                   <tr key={person._id} className={!person.isActive ? styles.inactive : ''}>
-                    <td>{person.roomNumber}</td>
+                    <td>
+                      {person.blockId && blockMap[person.blockId] && (
+                        <span className={styles.blockTag}>{blockMap[person.blockId]}</span>
+                      )}
+                      <span>Room {person.roomNumber}</span>
+                    </td>
                     <td>
                       <Link href={`/persons/${person._id}`} className={styles.nameLink}>
                         {person.name}

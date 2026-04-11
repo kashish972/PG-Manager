@@ -2,21 +2,37 @@
   padding: 0;
 }
 
-.title {
-  font-size: 2rem;
-  margin-bottom: 24px;
+.header {
+  margin-bottom: 28px;
 }
 
-@media (max-width: 768px) {
-  .title {
-    font-size: 1.5rem;
-  }
+.title {
+  font-size: 1.75rem;
+  margin: 0 0 4px 0;
+  color: #ffffff;
+}
+
+.subtitle {
+  color: #6a6a7a;
+  font-size: 0.9rem;
+  margin: 0;
 }
 
 .loading {
-  text-align: center;
-  color: #a0a0b0;
   padding: 60px 20px;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #1f1f3a 25%, #2a2a4e 50%, #1f1f3a 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 16px;
+  height: 400px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .statsGrid {
@@ -41,128 +57,438 @@
 .statCard {
   background: #1f1f3a;
   padding: 20px;
-  border-radius: 12px;
-  text-align: center;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+
+.occupancyCard::before { background: linear-gradient(90deg, #e94560, #ff6b8a); }
+.availableCard::before { background: linear-gradient(90deg, #00d9a5, #00ffcc); }
+.revenueCard::before { background: linear-gradient(90deg, #ffc947, #ffdd57); }
+.annualCard::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+
+.statIcon {
+  font-size: 1.8rem;
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .statValue {
-  display: block;
   font-size: 1.75rem;
   font-weight: 700;
-  color: white;
-}
-
-.statValue.available {
-  color: #00d9a5;
+  color: #ffffff;
+  font-family: var(--font-outfit);
+  line-height: 1.2;
 }
 
 .statLabel {
-  color: #a0a0b0;
-  font-size: 0.875rem;
-  display: block;
-  margin-top: 4px;
-}
-
-.statSub {
   color: #6a6a7a;
-  font-size: 0.75rem;
-  display: block;
-  margin-top: 4px;
+  font-size: 0.8rem;
 }
 
-.chartsGrid {
+.statMiniChart {
+  margin-top: auto;
+}
+
+.miniProgress {
+  height: 4px;
+  background: #2a2a4e;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.miniProgress::after {
+  content: '';
+  display: block;
+  height: 100%;
+  width: var(--progress);
+  background: var(--color);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.statBadge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0, 217, 165, 0.15);
+  color: #00d9a5;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.statTrend {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(0, 217, 165, 0.15);
+  color: #00d9a5;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.chartsSection {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 20px;
   margin-bottom: 24px;
 }
 
-@media (max-width: 768px) {
-  .chartsGrid {
+@media (max-width: 900px) {
+  .chartsSection {
     grid-template-columns: 1fr;
   }
 }
 
-.chartCard {
+.mainChartCard, .pieChartCard {
   background: #1f1f3a;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 16px;
+  padding: 24px;
 }
 
-.chartCard h3 {
-  color: white;
-  font-size: 1rem;
-  margin-bottom: 16px;
-}
-
-.chart {
-  width: 100%;
-}
-
-.breakdown {
+.blockChartsGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
 }
 
-@media (max-width: 768px) {
-  .breakdown {
-    grid-template-columns: 1fr;
-  }
-}
-
-.breakdownCard {
-  background: #1f1f3a;
+.blockPieCard {
+  background: var(--surface);
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid var(--border);
 }
 
-.breakdownCard h3 {
-  color: white;
-  font-size: 1rem;
-  margin-bottom: 16px;
+.blockPieTitle {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
 }
 
-.breakdownList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.breakdownItem {
+.blockPieStats {
   display: flex;
   justify-content: space-between;
+  font-size: 0.75rem;
+  margin-bottom: 8px;
+}
+
+.blockPieChart {
+  margin: 8px 0;
+}
+
+.blockPiePercentage {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.acNonAcStats {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.acStat, .nonAcStat {
+  display: flex;
   align-items: center;
-  padding: 12px;
-  background: #16213e;
-  border-radius: 8px;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
 }
 
-.breakdownItem span:first-child {
-  color: #a0a0b0;
-}
-
-.breakdownItem span:last-child {
-  color: white;
-  font-weight: 600;
-}
-
-.breakdownItem .active {
-  color: #00d9a5;
-}
-
-.breakdownItem .inactive {
-  color: #e94560;
-}
-
-.breakdownItem .pending {
-  color: #ffc947;
-}
-
-.breakdownItem .inProgress {
+.acStat svg {
   color: #6366f1;
 }
 
-.breakdownItem .resolved {
+.nonAcStat svg {
+  color: #ffc947;
+}
+
+.acAvailable {
   color: #00d9a5;
+}
+
+.nonAcAvailable {
+  color: #00d9a5;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.chartHeader h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.chartPeriod {
+  color: #6a6a7a;
+  font-size: 0.8rem;
+}
+
+.chartContainer {
+  width: 100%;
+}
+
+.pieContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pieLegend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  color: #a0a0b0;
+  font-size: 0.85rem;
+  flex: 1;
+}
+
+.legendValue {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.occupancyBar {
+  background: #1f1f3a;
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.barHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.barHeader span:first-child {
+  color: #a0a0b0;
+  font-size: 0.9rem;
+}
+
+.barHeader span:last-child {
+  color: #e94560;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.progressBar {
+  height: 10px;
+  background: #2a2a4e;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #e94560, #ff6b8a);
+  border-radius: 5px;
+  transition: width 0.8s ease;
+}
+
+.barMeta {
+  display: flex;
+  justify-content: space-between;
+  color: #6a6a7a;
+  font-size: 0.8rem;
+}
+
+.bottomGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .bottomGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .bottomGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: #1f1f3a;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.cardHeader {
+  margin-bottom: 20px;
+}
+
+.cardHeader h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.analyticsList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.analyticsItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: #16213e;
+  border-radius: 10px;
+}
+
+.analyticsInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #a0a0b0;
+  font-size: 0.85rem;
+}
+
+.analyticsIcon {
+  font-size: 1rem;
+}
+
+.analyticsValue {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #ffffff;
+}
+
+.maintenanceChart {
+  margin-bottom: 16px;
+}
+
+.maintenanceStats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.maintenanceStat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #a0a0b0;
+  font-size: 0.85rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.revenueBreakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.revenueItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.revenueHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.revenueHeader span:first-child {
+  color: #6a6a7a;
+  font-size: 0.85rem;
+}
+
+.revenueAmount {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.revenueBar {
+  height: 6px;
+  background: #2a2a4e;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.revenueFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+  }
 }

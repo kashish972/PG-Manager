@@ -5,16 +5,17 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getStaff, getStaffStats, deleteStaff } from '@/actions/staff.actions';
+import { User, Wrench, ChefHat, Shield, Sparkles, ClipboardList } from 'lucide-react';
 import styles from './page.module.css';
 
-const ROLE_ICONS: Record<string, string> = {
-  caretaker: '🧑‍💼',
-  cook: '👨‍🍳',
-  security: '👮',
-  cleaner: '🧹',
-  manager: '📋',
-  maintenance: '🔧',
-  other: '👤',
+const ROLE_ICONS: Record<string, any> = {
+  caretaker: User,
+  cook: ChefHat,
+  security: Shield,
+  cleaner: Sparkles,
+  manager: ClipboardList,
+  maintenance: Wrench,
+  other: User,
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -131,14 +132,16 @@ export default function StaffPage() {
           </div>
         ) : (
           <div className={styles.grid}>
-            {filteredStaff.map((member: any) => (
+            {filteredStaff.map((member: any) => {
+              const RoleIcon = ROLE_ICONS[member.role] || User;
+              return (
               <div 
                 key={member._id} 
                 className={`${styles.card} ${!member.isActive ? styles.inactive : ''}`}
               >
                 <div className={styles.cardHeader}>
                   <div className={styles.avatar}>
-                    {ROLE_ICONS[member.role] || '👤'}
+                    <RoleIcon size={32} />
                   </div>
                   <div className={styles.info}>
                     <h3>{member.name}</h3>
@@ -186,7 +189,8 @@ export default function StaffPage() {
                   Delete
                 </button>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

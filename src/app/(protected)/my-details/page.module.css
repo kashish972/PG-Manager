@@ -1,10 +1,15 @@
 .container {
   padding: 0;
+  animation: fadeIn 0.4s ease;
 }
 
 .title {
   font-size: 2rem;
   margin-bottom: 24px;
+  font-family: var(--font-outfit), sans-serif;
+  font-weight: 600;
+  color: var(--text-primary);
+  animation: fadeInUp 0.5s ease;
 }
 
 @media (max-width: 768px) {
@@ -16,22 +21,29 @@
 
 .loading {
   text-align: center;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   padding: 60px 20px;
+  font-size: 1.125rem;
+  animation: pulse 2s infinite;
 }
 
 .noData {
   text-align: center;
   padding: 60px 20px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  animation: fadeInUp 0.5s ease;
 }
 
 .noData h2 {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   margin-bottom: 8px;
+  font-family: var(--font-outfit), sans-serif;
 }
 
 .noData p {
-  color: #6a6a7a;
+  color: var(--text-muted);
 }
 
 .overviewCard {
@@ -49,12 +61,27 @@
 }
 
 .overviewItem {
-  background: #1f1f3a;
+  background: var(--surface);
   padding: 16px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
   gap: 8px;
+  transition: all var(--transition-normal);
+  animation: fadeInUp 0.5s ease backwards;
+}
+
+.overviewItem:nth-child(1) { animation-delay: 0.1s; }
+.overviewItem:nth-child(2) { animation-delay: 0.15s; }
+.overviewItem:nth-child(3) { animation-delay: 0.2s; }
+.overviewItem:nth-child(4) { animation-delay: 0.25s; }
+.overviewItem:nth-child(5) { animation-delay: 0.3s; }
+
+.overviewItem:hover {
+  background: var(--surface-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 @media (max-width: 480px) {
@@ -69,32 +96,34 @@
 
 .overviewLabel {
   font-size: 0.875rem;
-  color: #a0a0b0;
+  color: var(--text-secondary);
 }
 
 .overviewValue {
   font-size: 1.25rem;
   font-weight: 600;
-  color: white;
+  color: var(--text-primary);
 }
 
 .overviewValue.pending {
-  color: #e94560;
+  color: var(--accent);
 }
 
 .overviewValue.paid {
-  color: #00d9a5;
+  color: var(--success);
 }
 
 .overviewValue.overdue {
-  color: #e94560;
+  color: var(--accent);
 }
 
 .card {
-  background: #1f1f3a;
-  border-radius: 16px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   padding: 24px;
   margin-bottom: 24px;
+  animation: fadeInUp 0.5s ease 0.3s backwards;
 }
 
 .section {
@@ -107,10 +136,12 @@
 
 .sectionTitle {
   font-size: 1.125rem;
-  color: white;
+  color: var(--text-primary);
   margin-bottom: 16px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #2a2a4e;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-outfit), sans-serif;
+  font-weight: 600;
 }
 
 .infoGrid {
@@ -127,23 +158,25 @@
 
 .label {
   font-size: 0.875rem;
-  color: #a0a0b0;
+  color: var(--text-secondary);
 }
 
 .value {
   font-size: 1rem;
-  color: white;
+  color: var(--text-primary);
 }
 
 .dueDate {
-  color: #e94560;
+  color: var(--accent);
   font-weight: 600;
 }
 
 .paymentsSection {
-  background: #1f1f3a;
-  border-radius: 16px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   padding: 24px;
+  animation: fadeInUp 0.5s ease 0.4s backwards;
 }
 
 .paymentsList {
@@ -157,8 +190,17 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px;
-  background: #16213e;
-  border-radius: 8px;
+  background: var(--surface-elevated);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  animation: slideInLeft 0.4s ease backwards;
+}
+
+.paymentCard:hover {
+  background: var(--surface-hover);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
 }
 
 .paymentInfo {
@@ -169,50 +211,50 @@
 
 .paymentMonth {
   font-weight: 500;
-  color: white;
+  color: var(--text-primary);
 }
 
 .paymentDate {
   font-size: 0.875rem;
-  color: #a0a0b0;
+  color: var(--text-secondary);
 }
 
 .paymentAmount {
   font-size: 1.125rem;
   font-weight: 600;
-  color: white;
+  color: var(--text-primary);
 }
 
 .paymentStatus {
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: capitalize;
 }
 
 .paymentStatus.paid {
-  background: rgba(0, 217, 165, 0.15);
-  color: #00d9a5;
+  background: var(--success-glow);
+  color: var(--success);
 }
 
 .paymentStatus.pending {
-  background: rgba(255, 201, 71, 0.15);
-  color: #ffc947;
+  background: var(--warning-glow);
+  color: var(--warning);
 }
 
 .paymentStatus.overdue {
-  background: rgba(233, 69, 96, 0.15);
-  color: #e94560;
+  background: var(--accent-glow);
+  color: var(--accent);
 }
 
-.paymentStatus.pending {
-  background: rgba(255, 201, 71, 0.15);
-  color: #ffc947;
+.paymentStatus.paid {
+  background: var(--success-glow);
+  color: var(--success);
 }
 
 .noPayments {
   text-align: center;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   padding: 20px;
 }

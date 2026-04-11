@@ -6,6 +6,7 @@ import { personRepository } from '@/repositories/person.repository';
 import { paymentRepository } from '@/repositories/payment.repository';
 import { maintenanceRepository } from '@/repositories/maintenance.repository';
 import { pgRepository } from '@/repositories/pg.repository';
+import { blockRepository } from '@/repositories/block.repository';
 
 export async function getAnalyticsData() {
   const session = await getServerSession(authOptions);
@@ -57,6 +58,37 @@ export async function getAnalyticsData() {
       monthlyRevenue.push({ month: monthName, revenue });
     }
 
+    const blocks = await blockRepository.findAll(tenantId);
+    const blockWiseOccupancy = blocks.map(block => {
+      const blockRoomNumbers = new Set(block.rooms.map(r => r.roomNumber));
+      const blockOccupied = Array.from(occupiedRoomNumbers).filter(rn => blockRoomNumbers.has(rn)).length;
+      const blockTotal = block.rooms.length;
+      const blockAvailable = blockTotal - blockOccupied;
+
+      const acRooms = block.rooms.filter(r => r.isAC);
+      const nonAcRooms = block.rooms.filter(r => !r.isAC);
+      const acOccupied = acRooms.filter(r => occupiedRoomNumbers.has(r.roomNumber)).length;
+      const nonAcOccupied = nonAcRooms.filter(r => occupiedRoomNumbers.has(r.roomNumber)).length;
+
+      return {
+        name: block.name,
+        total: blockTotal,
+        occupied: blockOccupied,
+        available: blockAvailable,
+        occupancyRate: blockTotal > 0 ? Math.round((blockOccupied / blockTotal) * 100) : 0,
+        ac: {
+          total: acRooms.length,
+          occupied: acOccupied,
+          available: acRooms.length - acOccupied,
+        },
+        nonAc: {
+          total: nonAcRooms.length,
+          occupied: nonAcOccupied,
+          available: nonAcRooms.length - nonAcOccupied,
+        },
+      };
+    });
+
     return {
       occupancy: {
         total: totalRooms,
@@ -82,6 +114,7 @@ export async function getAnalyticsData() {
         active: activePersons.length,
         inactive: persons.length - activePersons.length,
       },
+      blocks: blockWiseOccupancy,
     };
   } catch (error) {
     console.error('Analytics error:', error);

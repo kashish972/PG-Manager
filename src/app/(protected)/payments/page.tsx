@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { getPersons } from '@/actions/person.actions';
 import QRCode from 'react-qr-code';
 import { jsPDF } from 'jspdf';
+import { FileText } from 'lucide-react';
 import styles from './page.module.css';
 
 export default function PaymentsPage() {
@@ -218,7 +219,7 @@ export default function PaymentsPage() {
 
               <div className={styles.modalActions}>
                 <button className={styles.receiptBtn} onClick={generateReceipt}>
-                  📄 Download Receipt
+                  <FileText className={styles.icon} size={16} /> Download Receipt
                 </button>
               </div>
 

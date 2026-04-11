@@ -1,20 +1,22 @@
 .container {
   padding: 0;
   max-width: 600px;
+  animation: fadeInUp 0.4s ease forwards;
 }
 
 .backBtn {
   background: transparent;
   border: none;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   cursor: pointer;
   padding: 0;
   margin-bottom: 16px;
+  transition: color var(--transition-fast);
 }
 
 .backBtn:hover {
-  color: #e94560;
+  color: var(--accent);
 }
 
 .title {
@@ -30,17 +32,21 @@
 
 .loading {
   text-align: center;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   padding: 60px 20px;
 }
 
 .form {
-  background: #1f1f3a;
+  background: var(--surface);
   padding: 24px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  animation: scaleIn 0.3s ease forwards;
+  animation-delay: 0.1s;
 }
 
 @media (max-width: 480px) {
@@ -68,53 +74,63 @@
 }
 
 .label {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   font-weight: 500;
 }
 
 .input, .select {
-  background: #0f0f23;
-  border: 1px solid #2a2a4e;
-  border-radius: 8px;
+  background: var(--background-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   padding: 12px 16px;
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 1rem;
+  transition: all var(--transition-fast);
 }
 
 .input:focus, .select:focus {
   outline: none;
-  border-color: #e94560;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 .input::placeholder {
-  color: #6a6a7a;
+  color: var(--text-muted);
 }
 
 .select {
   cursor: pointer;
 }
 
+.select option {
+  background: var(--background-secondary);
+  color: var(--text-primary);
+}
+
 .error {
-  color: #e94560;
+  color: var(--accent);
   font-size: 0.875rem;
   margin: 0;
 }
 
 .submitBtn {
   padding: 14px 32px;
-  background: #e94560;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
 }
 
 .submitBtn:hover:not(:disabled) {
-  background: #d63850;
+  background: linear-gradient(135deg, var(--accent-hover) 0%, #c7334d 100%);
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
 }
 
 .submitBtn:disabled {

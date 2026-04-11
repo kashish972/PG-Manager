@@ -3,6 +3,8 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useEffect, useState } from 'react';
+import { getBlocks } from '@/actions/block.actions';
 import styles from './Form.module.css';
 
 const personSchema = z.object({
@@ -11,6 +13,7 @@ const personSchema = z.object({
   phone: z.string().min(10, 'Phone must be 10 digits'),
   email: z.string().email('Invalid email').optional(),
   address: z.string().optional(),
+  blockId: z.string().min(1, 'Block is required'),
   roomNumber: z.string().min(1, 'Room number is required'),
   moveInDate: z.string().min(1, 'Move in date is required'),
   monthlyRent: z.number().min(0, 'Rent must be positive'),
@@ -29,11 +32,50 @@ export function PersonForm({ onSubmit, defaultValues, isLoading }: PersonFormPro
   const {
     register,
     handleSubmit,
+    watch,
+    reset,
+    setValue,
     formState: { errors },
   } = useForm<PersonFormData>({
     resolver: zodResolver(personSchema),
     defaultValues,
   });
+
+  const [blocks, setBlocks] = useState<any[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    getBlocks().then(data => {
+      setBlocks(data || []);
+      setIsLoaded(true);
+    }).catch(() => {
+      setIsLoaded(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded && defaultValues && defaultValues.blockId) {
+      reset({
+        ...defaultValues,
+        blockId: String(defaultValues.blockId),
+        roomNumber: String(defaultValues.roomNumber || ''),
+      });
+    }
+  }, [isLoaded, defaultValues, reset]);
+
+  const selectedBlockId = watch('blockId');
+
+  const getCurrentBlockRooms = () => {
+    if (!selectedBlockId) return [];
+    const block = blocks.find(b => String(b._id) === selectedBlockId);
+    return block?.rooms || [];
+  };
+
+  const getDefaultBlockRooms = () => {
+    if (!defaultValues?.blockId || !blocks.length) return [];
+    const block = blocks.find(b => String(b._id) === String(defaultValues.blockId));
+    return block?.rooms || [];
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
@@ -68,8 +110,24 @@ export function PersonForm({ onSubmit, defaultValues, isLoading }: PersonFormPro
         </div>
 
         <div className={styles.field}>
+          <label className={styles.label}>Block *</label>
+          <select {...register('blockId')} className={styles.select}>
+            <option value="">Select Block</option>
+            {blocks.map(block => (
+              <option key={block._id} value={String(block._id)}>{block.name}</option>
+            ))}
+          </select>
+          {errors.blockId && <span className={styles.error}>{errors.blockId.message}</span>}
+        </div>
+
+        <div className={styles.field}>
           <label className={styles.label}>Room Number *</label>
-          <input {...register('roomNumber')} className={styles.input} />
+          <select {...register('roomNumber')} className={styles.select}>
+            <option value="">Select Room</option>
+            {(selectedBlockId ? getCurrentBlockRooms() : defaultValues?.blockId ? getDefaultBlockRooms() : []).map((room: any) => (
+              <option key={room.roomNumber} value={room.roomNumber}>Room {room.roomNumber}</option>
+            ))}
+          </select>
           {errors.roomNumber && <span className={styles.error}>{errors.roomNumber.message}</span>}
         </div>
 

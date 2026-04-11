@@ -5,16 +5,17 @@ import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getStaffById, getStaffSalaryHistory, getStaffPendingMonths } from '@/actions/staff.actions';
+import { User, Wrench, ChefHat, Shield, Sparkles, ClipboardList } from 'lucide-react';
 import styles from './page.module.css';
 
-const ROLE_ICONS: Record<string, string> = {
-  caretaker: '🧑‍💼',
-  cook: '👨‍🍳',
-  security: '👮',
-  cleaner: '🧹',
-  manager: '📋',
-  maintenance: '🔧',
-  other: '👤',
+const ROLE_ICONS: Record<string, any> = {
+  caretaker: User,
+  cook: ChefHat,
+  security: Shield,
+  cleaner: Sparkles,
+  manager: ClipboardList,
+  maintenance: Wrench,
+  other: User,
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -86,6 +87,8 @@ export default function StaffDetailPage() {
     );
   }
 
+  const RoleIcon = ROLE_ICONS[staff.role] || User;
+
   return (
     <MainLayout>
       <div className={styles.container}>
@@ -96,7 +99,7 @@ export default function StaffDetailPage() {
         <div className={styles.card}>
           <div className={styles.header}>
             <div className={styles.avatar}>
-              {ROLE_ICONS[staff.role] || '👤'}
+              <RoleIcon size={32} />
             </div>
             <div className={styles.headerInfo}>
               <h1>{staff.name}</h1>

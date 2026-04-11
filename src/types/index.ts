@@ -20,6 +20,7 @@ export interface IPerson {
   phone: string;
   email?: string;
   address?: string;
+  blockId?: string;
   roomNumber: string;
   moveInDate: Date;
   monthlyRent: number;
@@ -32,6 +33,15 @@ export interface IPerson {
 export interface IRoom {
   roomNumber: string;
   capacity: number;
+  isAC: boolean;
+}
+
+export interface IBlock {
+  _id: ObjectId;
+  name: string;
+  rooms: IRoom[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IPG {
@@ -99,6 +109,7 @@ export interface CreatePersonInput {
   phone: string;
   email?: string;
   address?: string;
+  blockId?: string;
   roomNumber: string;
   moveInDate: Date;
   monthlyRent: number;

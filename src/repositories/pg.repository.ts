@@ -17,6 +17,7 @@ export class PGRepository {
     await tenantDb.createCollection('complaints');
     await tenantDb.createCollection('staff');
     await tenantDb.createCollection('salaryPayments');
+    await tenantDb.createCollection('blocks');
     
     const mainDb = await connectToMainDb();
     

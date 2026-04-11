@@ -1,5 +1,6 @@
 .container {
   padding: 0;
+  animation: fadeInUp 0.4s ease forwards;
 }
 
 .header {
@@ -19,6 +20,7 @@
 
 .title {
   font-size: 2rem;
+  color: var(--text-primary);
 }
 
 @media (max-width: 768px) {
@@ -29,15 +31,18 @@
 
 .loading {
   text-align: center;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   padding: 60px 20px;
+  animation: fadeIn 0.3s ease forwards;
 }
 
 .tableWrapper {
-  background: #1f1f3a;
-  border-radius: 12px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  animation: fadeInUp 0.5s ease forwards;
 }
 
 .table {
@@ -50,18 +55,29 @@
 .table td {
   padding: 16px 20px;
   text-align: left;
+  transition: background var(--transition-fast);
 }
 
 .table th {
-  background: #16213e;
-  color: #a0a0b0;
+  background: var(--secondary);
+  color: var(--text-secondary);
   font-weight: 500;
   font-size: 0.875rem;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.table tr {
-  border-bottom: 1px solid #2a2a4e;
+.table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition-fast);
+}
+
+.table tbody tr:nth-child(even) {
+  background: var(--surface-hover);
+}
+
+.table tbody tr:hover {
+  background: var(--surface-elevated);
 }
 
 .table tr:last-child {
@@ -71,7 +87,7 @@
 .role {
   display: inline-block;
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: capitalize;
@@ -79,29 +95,30 @@
 
 .role.owner {
   background: rgba(233, 69, 96, 0.15);
-  color: #e94560;
+  color: var(--accent);
 }
 
 .role.admin {
   background: rgba(255, 201, 71, 0.15);
-  color: #ffc947;
+  color: var(--warning);
 }
 
 .role.member {
   background: rgba(0, 217, 165, 0.15);
-  color: #00d9a5;
+  color: var(--success);
 }
 
 .addBtn {
-  background: #00d9a5;
-  color: #0f0f23;
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-hover) 100%);
+  color: var(--primary);
   border: none;
   padding: 12px 24px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all var(--transition-normal);
   white-space: nowrap;
+  box-shadow: var(--shadow-sm);
 }
 
 @media (max-width: 768px) {
@@ -112,23 +129,29 @@
 }
 
 .addBtn:hover {
-  background: #00c896;
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+.addBtn:active {
+  transform: translateY(0);
 }
 
 .deleteBtn {
   background: transparent;
-  color: #e94560;
-  border: 1px solid #e94560;
+  color: var(--accent);
+  border: 1px solid var(--accent);
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.875rem;
-  transition: all 0.2s;
+  transition: all var(--transition-normal);
 }
 
 .deleteBtn:hover {
-  background: #e94560;
+  background: var(--accent);
   color: white;
+  box-shadow: var(--shadow-glow);
 }
 
 .modalOverlay {
@@ -142,14 +165,17 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  animation: fadeIn 0.2s ease forwards;
 }
 
 .modal {
-  background: #1f1f3a;
+  background: var(--surface);
   padding: 32px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 450px;
+  animation: scaleIn 0.3s ease forwards;
 }
 
 @media (max-width: 480px) {
@@ -161,7 +187,8 @@
 
 .modal h2 {
   margin-bottom: 24px;
-  color: white;
+  color: var(--text-primary);
+  font-size: 1.5rem;
 }
 
 .formGroup {
@@ -171,19 +198,28 @@
 .formGroup label {
   display: block;
   margin-bottom: 8px;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .formGroup input,
 .formGroup select {
   width: 100%;
   padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid #2a2a4e;
-  background: #16213e;
-  color: white;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--secondary);
+  color: var(--text-primary);
   font-size: 1rem;
+  transition: all var(--transition-fast);
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 .formGroup select {
@@ -191,9 +227,10 @@
 }
 
 .error {
-  color: #e94560;
+  color: var(--accent);
   font-size: 0.875rem;
   margin-bottom: 16px;
+  animation: fadeIn 0.3s ease forwards;
 }
 
 .modalActions {
@@ -205,33 +242,44 @@
 
 .cancelBtn {
   background: transparent;
-  color: #a0a0b0;
-  border: 1px solid #2a2a4e;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
   padding: 12px 24px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: 500;
+  transition: all var(--transition-normal);
 }
 
 .cancelBtn:hover {
-  background: #2a2a4e;
+  background: var(--surface-elevated);
+  border-color: var(--text-secondary);
 }
 
 .submitBtn {
-  background: #00d9a5;
-  color: #0f0f23;
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-hover) 100%);
+  color: var(--primary);
   border: none;
   padding: 12px 24px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: 600;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
 }
 
 .submitBtn:hover {
-  background: #00c896;
+  box-shadow: var(--success-glow);
+  transform: translateY(-2px);
+}
+
+.submitBtn:active {
+  transform: translateY(0);
 }
 
 .submitBtn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }

@@ -71,8 +71,12 @@ export default function NoticesPage() {
           </div>
         ) : (
           <div className={styles.grid}>
-            {notices.map((notice: any) => (
-              <div key={notice._id} className={styles.card}>
+            {notices.map((notice: any, index: number) => (
+              <div 
+                key={notice._id} 
+                className={styles.card}
+                style={{ '--index': index } as React.CSSProperties}
+              >
                 <div className={styles.cardHeader}>
                   <span className={`${styles.priority} ${getPriorityColor(notice.priority)}`}>
                     {notice.priority}
