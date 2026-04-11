@@ -1,0 +1,218 @@
+.container {
+  padding: 0;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+  }
+}
+
+.loading {
+  text-align: center;
+  color: #a0a0b0;
+  padding: 60px 20px;
+}
+
+.noData {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.noData h2 {
+  color: #a0a0b0;
+  margin-bottom: 8px;
+}
+
+.noData p {
+  color: #6a6a7a;
+}
+
+.overviewCard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 480px) {
+  .overviewCard {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+.overviewItem {
+  background: #1f1f3a;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 480px) {
+  .overviewItem {
+    padding: 12px;
+  }
+  
+  .overviewValue {
+    font-size: 1rem;
+  }
+}
+
+.overviewLabel {
+  font-size: 0.875rem;
+  color: #a0a0b0;
+}
+
+.overviewValue {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+}
+
+.overviewValue.pending {
+  color: #e94560;
+}
+
+.overviewValue.paid {
+  color: #00d9a5;
+}
+
+.overviewValue.overdue {
+  color: #e94560;
+}
+
+.card {
+  background: #1f1f3a;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section:last-child {
+  margin-bottom: 0;
+}
+
+.sectionTitle {
+  font-size: 1.125rem;
+  color: white;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2a2a4e;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 0.875rem;
+  color: #a0a0b0;
+}
+
+.value {
+  font-size: 1rem;
+  color: white;
+}
+
+.dueDate {
+  color: #e94560;
+  font-weight: 600;
+}
+
+.paymentsSection {
+  background: #1f1f3a;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.paymentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paymentCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: #16213e;
+  border-radius: 8px;
+}
+
+.paymentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.paymentMonth {
+  font-weight: 500;
+  color: white;
+}
+
+.paymentDate {
+  font-size: 0.875rem;
+  color: #a0a0b0;
+}
+
+.paymentAmount {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+}
+
+.paymentStatus {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.paymentStatus.paid {
+  background: rgba(0, 217, 165, 0.15);
+  color: #00d9a5;
+}
+
+.paymentStatus.pending {
+  background: rgba(255, 201, 71, 0.15);
+  color: #ffc947;
+}
+
+.paymentStatus.overdue {
+  background: rgba(233, 69, 96, 0.15);
+  color: #e94560;
+}
+
+.paymentStatus.pending {
+  background: rgba(255, 201, 71, 0.15);
+  color: #ffc947;
+}
+
+.noPayments {
+  text-align: center;
+  color: #a0a0b0;
+  padding: 20px;
+}

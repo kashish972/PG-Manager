@@ -1,0 +1,283 @@
+.container {
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+}
+
+.headerActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .headerActions {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+}
+
+.generateBtn {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.generateBtn:hover:not(:disabled) {
+  background: #4f46e5;
+}
+
+.generateBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.title {
+  font-size: 2rem;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+  }
+}
+
+.loading,
+.empty {
+  text-align: center;
+  color: #a0a0b0;
+  padding: 60px 20px;
+}
+
+.tableWrapper {
+  background: #1f1f3a;
+  border-radius: 12px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.table th,
+.table td {
+  padding: 16px 20px;
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .table th,
+  .table td {
+    padding: 12px 16px;
+  }
+}
+
+.table th {
+  background: #16213e;
+  color: #a0a0b0;
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+
+.table tr {
+  border-bottom: 1px solid #2a2a4e;
+}
+
+.table tr:last-child {
+  border-bottom: none;
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status.paid {
+  background: rgba(0, 217, 165, 0.15);
+  color: #00d9a5;
+}
+
+.status.pending {
+  background: rgba(255, 201, 71, 0.15);
+  color: #ffc947;
+}
+
+.status.overdue {
+  background: rgba(233, 69, 96, 0.15);
+  color: #e94560;
+}
+
+.method {
+  text-transform: capitalize;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.viewLink {
+  color: #e94560;
+  font-weight: 500;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.viewLink:hover {
+  text-decoration: underline;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
+  background: #1f1f3a;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modalHeader h2 {
+  color: white;
+  margin: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: #a0a0b0;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.closeBtn:hover {
+  color: white;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 480px) {
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detailItem .label {
+  color: #a0a0b0;
+  font-size: 0.75rem;
+}
+
+.detailItem .value {
+  color: white;
+  font-size: 0.875rem;
+}
+
+.modalActions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.receiptBtn {
+  background: #00d9a5;
+  color: #0f0f23;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+
+.receiptBtn:hover {
+  background: #00c896;
+}
+
+.qrSection {
+  background: #16213e;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.qrSection h3 {
+  color: white;
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+}
+
+.qrNote {
+  color: #a0a0b0;
+  font-size: 0.75rem;
+  margin: 0 0 12px 0;
+}
+
+.qrCode {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  display: inline-block;
+}

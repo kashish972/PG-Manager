@@ -1,0 +1,90 @@
+'use server';
+
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { personRepository } from '@/repositories/person.repository';
+import { paymentRepository } from '@/repositories/payment.repository';
+import { maintenanceRepository } from '@/repositories/maintenance.repository';
+import { pgRepository } from '@/repositories/pg.repository';
+
+export async function getAnalyticsData() {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role === 'member') {
+    return null;
+  }
+
+  const tenantId = session.user.tenantId;
+
+  try {
+    const pg = await pgRepository.findBySlug(tenantId);
+    const totalRooms = pg?.totalRooms || 10;
+    
+    const persons = await personRepository.findAll(tenantId);
+    const activePersons = persons.filter(p => p.isActive && p.roomNumber);
+    
+    const occupiedRoomNumbers = new Set(activePersons.map(p => p.roomNumber));
+    const occupiedRooms = occupiedRoomNumbers.size;
+    const availableRooms = totalRooms - occupiedRooms;
+    const occupancyRate = totalRooms > 0 ? Math.round((occupiedRooms / totalRooms) * 100) : 0;
+
+    const totalRent = activePersons.reduce((sum, p) => sum + (p.monthlyRent || 0), 0);
+    const avgRent = activePersons.length > 0 ? Math.round(totalRent / activePersons.length) : 0;
+
+    const payments = await paymentRepository.findAll(tenantId);
+    const paidPayments = payments.filter(p => p.status === 'paid');
+    const totalCollected = paidPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
+
+    const maintenanceStats = await maintenanceRepository.countByStatus(tenantId);
+    const openRequests = maintenanceStats.pending + maintenanceStats.in_progress;
+
+    const months: { [key: string]: number } = {};
+    const last6Months: string[] = [];
+    const now = new Date();
+    
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const monthName = date.toLocaleString('default', { month: 'short' });
+      months[monthKey] = 0;
+      last6Months.push(monthKey);
+    }
+
+    const monthlyRevenue: { month: string; revenue: number }[] = [];
+    for (const month of last6Months) {
+      const monthPayments = payments.filter(p => p.month === month && p.status === 'paid');
+      const revenue = monthPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
+      const monthName = new Date(month + '-01').toLocaleString('default', { month: 'short' });
+      monthlyRevenue.push({ month: monthName, revenue });
+    }
+
+    return {
+      occupancy: {
+        total: totalRooms,
+        occupied: occupiedRooms,
+        available: availableRooms,
+        rate: occupancyRate,
+      },
+      revenue: {
+        totalCollected,
+        monthly: totalRent,
+        averageRent: avgRent,
+        projectedAnnual: totalRent * 12,
+        monthlyTrend: monthlyRevenue,
+      },
+      maintenance: {
+        open: openRequests,
+        pending: maintenanceStats.pending,
+        inProgress: maintenanceStats.in_progress,
+        resolved: maintenanceStats.resolved,
+      },
+      persons: {
+        total: persons.length,
+        active: activePersons.length,
+        inactive: persons.length - activePersons.length,
+      },
+    };
+  } catch (error) {
+    console.error('Analytics error:', error);
+    return null;
+  }
+}

@@ -1,0 +1,170 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #1a1a2e;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #2a2a4e;
+}
+
+.header h2 {
+  color: #ffffff;
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: #a0a0b0;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.closeBtn:hover {
+  background: #2a2a4e;
+}
+
+.content {
+  padding: 20px 24px;
+}
+
+.bulkActions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.bulkBtn {
+  flex: 1;
+  padding: 8px 16px;
+  background: #2a2a4e;
+  border: 1px solid #3a3a5e;
+  color: #a0a0b0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.bulkBtn:hover:not(:disabled) {
+  background: #3a3a5e;
+  color: #ffffff;
+}
+
+.bulkBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.widgetList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.widgetItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #16213e;
+  border-radius: 8px;
+}
+
+.label {
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+.toggle {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  background: #2a2a4e;
+  border: none;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.toggle.active {
+  background: #e94560;
+}
+
+.toggleSlider {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+.toggle.active .toggleSlider {
+  transform: translateX(22px);
+}
+
+.footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #2a2a4e;
+}
+
+.resetBtn {
+  flex: 1;
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid #e94560;
+  color: #e94560;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.resetBtn:hover {
+  background: rgba(233, 69, 96, 0.1);
+}
+
+.doneBtn {
+  flex: 1;
+  padding: 10px 16px;
+  background: #e94560;
+  border: none;
+  color: #ffffff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background 0.2s;
+}
+
+.doneBtn:hover {
+  background: #d63d56;
+}

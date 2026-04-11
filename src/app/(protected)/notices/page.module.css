@@ -1,0 +1,144 @@
+.container {
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+}
+
+.title {
+  font-size: 2rem;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+  }
+}
+
+.loading, .empty {
+  text-align: center;
+  color: #a0a0b0;
+  padding: 60px 20px;
+}
+
+.addBtn {
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.addBtn:hover {
+  background: #d63850;
+}
+
+@media (max-width: 768px) {
+  .addBtn {
+    padding: 10px 16px;
+    font-size: 0.875rem;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: #1f1f3a;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.priority {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.priority.high {
+  background: rgba(233, 69, 96, 0.15);
+  color: #e94560;
+}
+
+.priority.medium {
+  background: rgba(255, 201, 71, 0.15);
+  color: #ffc947;
+}
+
+.priority.low {
+  background: rgba(0, 217, 165, 0.15);
+  color: #00d9a5;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.deleteBtn {
+  background: transparent;
+  color: #e94560;
+  border: 1px solid #e94560;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.deleteBtn:hover {
+  background: #e94560;
+  color: white;
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  color: white;
+  margin: 0;
+}
+
+.cardContent {
+  color: #a0a0b0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.date {
+  color: #6a6a7a;
+  font-size: 0.75rem;
+}

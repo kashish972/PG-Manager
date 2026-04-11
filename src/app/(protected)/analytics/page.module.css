@@ -1,0 +1,168 @@
+.container {
+  padding: 0;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+  }
+}
+
+.loading {
+  text-align: center;
+  color: #a0a0b0;
+  padding: 60px 20px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.statCard {
+  background: #1f1f3a;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.statValue {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: white;
+}
+
+.statValue.available {
+  color: #00d9a5;
+}
+
+.statLabel {
+  color: #a0a0b0;
+  font-size: 0.875rem;
+  display: block;
+  margin-top: 4px;
+}
+
+.statSub {
+  color: #6a6a7a;
+  font-size: 0.75rem;
+  display: block;
+  margin-top: 4px;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chartCard {
+  background: #1f1f3a;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.chartCard h3 {
+  color: white;
+  font-size: 1rem;
+  margin-bottom: 16px;
+}
+
+.chart {
+  width: 100%;
+}
+
+.breakdown {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .breakdown {
+    grid-template-columns: 1fr;
+  }
+}
+
+.breakdownCard {
+  background: #1f1f3a;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.breakdownCard h3 {
+  color: white;
+  font-size: 1rem;
+  margin-bottom: 16px;
+}
+
+.breakdownList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.breakdownItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #16213e;
+  border-radius: 8px;
+}
+
+.breakdownItem span:first-child {
+  color: #a0a0b0;
+}
+
+.breakdownItem span:last-child {
+  color: white;
+  font-weight: 600;
+}
+
+.breakdownItem .active {
+  color: #00d9a5;
+}
+
+.breakdownItem .inactive {
+  color: #e94560;
+}
+
+.breakdownItem .pending {
+  color: #ffc947;
+}
+
+.breakdownItem .inProgress {
+  color: #6366f1;
+}
+
+.breakdownItem .resolved {
+  color: #00d9a5;
+}

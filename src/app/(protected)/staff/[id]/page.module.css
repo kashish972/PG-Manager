@@ -1,0 +1,230 @@
+.container {
+  padding: 0;
+  max-width: 700px;
+}
+
+.backBtn {
+  background: transparent;
+  border: none;
+  color: #a0a0b0;
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+}
+
+.backBtn:hover {
+  color: #e94560;
+}
+
+.loading, .notFound {
+  text-align: center;
+  color: #a0a0b0;
+  padding: 60px 20px;
+}
+
+.card {
+  background: #1f1f3a;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #2a2a4e;
+}
+
+.avatar {
+  width: 70px;
+  height: 70px;
+  background: #2a2a4e;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.headerInfo h1 {
+  color: white;
+  margin: 0 0 6px 0;
+  font-size: 1.5rem;
+}
+
+.role {
+  color: #a0a0b0;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status.active {
+  background: rgba(0, 217, 165, 0.15);
+  color: #00d9a5;
+}
+
+.status.inactive {
+  background: rgba(233, 69, 96, 0.15);
+  color: #e94560;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 480px) {
+  .details {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detailLabel {
+  color: #a0a0b0;
+  font-size: 0.8rem;
+}
+
+.detailValue {
+  color: white;
+  font-size: 1rem;
+}
+
+.salary {
+  color: #00d9a5;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.pendingSection {
+  background: rgba(255, 201, 71, 0.1);
+  border: 1px solid rgba(255, 201, 71, 0.2);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.pendingSection h3 {
+  color: #ffc947;
+  margin: 0 0 12px 0;
+  font-size: 0.9rem;
+}
+
+.pendingList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pendingBadge {
+  background: rgba(255, 201, 71, 0.2);
+  color: #ffc947;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.pendingMore {
+  color: #ffc947;
+  font-size: 0.8rem;
+  padding: 4px 0;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+.payBtn {
+  flex: 1;
+  padding: 14px 24px;
+  background: #00d9a5;
+  border: none;
+  color: #0a0a1a;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.payBtn:hover {
+  background: #00c495;
+}
+
+.historyCard {
+  background: #1f1f3a;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.historyCard h2 {
+  color: white;
+  margin: 0 0 20px 0;
+  font-size: 1.1rem;
+}
+
+.noHistory {
+  color: #a0a0b0;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.historyItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: #16213e;
+  border-radius: 8px;
+}
+
+.historyLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.historyMonth {
+  color: white;
+  font-weight: 500;
+}
+
+.historyDate {
+  color: #6a6a7a;
+  font-size: 0.8rem;
+}
+
+.historyAmount {
+  color: #00d9a5;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
