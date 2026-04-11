@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { connectToTenantDb } from '@/lib/db';
-import { IComplaint, CreateComplaintInput, UpdateComplaintInput } from '@/types';
+import { IComplaint, CreateComplaintInput, UpdateComplaintInput, ComplaintStatus } from '@/types';
 
 export class ComplaintRepository {
   async create(tenantId: string, personId: string, input: CreateComplaintInput): Promise<IComplaint> {
@@ -39,7 +39,7 @@ export class ComplaintRepository {
       .toArray();
   }
 
-  async findByStatus(status: string, tenantId: string): Promise<IComplaint[]> {
+  async findByStatus(status: ComplaintStatus, tenantId: string): Promise<IComplaint[]> {
     const db = await connectToTenantDb(tenantId);
     return db.collection<IComplaint>('complaints')
       .find({ status })

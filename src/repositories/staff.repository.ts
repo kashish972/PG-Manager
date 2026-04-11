@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { connectToTenantDb } from '@/lib/db';
-import { IStaff, CreateStaffInput, UpdateStaffInput } from '@/types';
+import { IStaff, CreateStaffInput, UpdateStaffInput, StaffRole } from '@/types';
 
 export class StaffRepository {
   async create(tenantId: string, input: CreateStaffInput): Promise<IStaff> {
@@ -36,7 +36,7 @@ export class StaffRepository {
     return db.collection<IStaff>('staff').find({ isActive: true }).sort({ role: 1 }).toArray();
   }
 
-  async findByRole(role: string, tenantId: string): Promise<IStaff[]> {
+  async findByRole(role: StaffRole, tenantId: string): Promise<IStaff[]> {
     const db = await connectToTenantDb(tenantId);
     return db.collection<IStaff>('staff').find({ role, isActive: true }).toArray();
   }
