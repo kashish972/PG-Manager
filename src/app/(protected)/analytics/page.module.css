@@ -9,11 +9,11 @@
 .title {
   font-size: 1.75rem;
   margin: 0 0 4px 0;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .subtitle {
-  color: #6a6a7a;
+  color: var(--text-muted);
   font-size: 0.9rem;
   margin: 0;
 }
@@ -23,7 +23,7 @@
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #1f1f3a 25%, #2a2a4e 50%, #1f1f3a 75%);
+  background: linear-gradient(90deg, var(--surface) 25%, var(--surface-hover) 50%, var(--surface) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 16px;
@@ -55,7 +55,7 @@
 }
 
 .statCard {
-  background: #1f1f3a;
+  background: var(--surface);
   padding: 20px;
   border-radius: 16px;
   display: flex;
@@ -99,13 +99,13 @@
 .statValue {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
   font-family: var(--font-outfit);
   line-height: 1.2;
 }
 
 .statLabel {
-  color: #6a6a7a;
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 
@@ -115,7 +115,7 @@
 
 .miniProgress {
   height: 4px;
-  background: #2a2a4e;
+  background: var(--surface-hover);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -171,7 +171,7 @@
 }
 
 .mainChartCard, .pieChartCard {
-  background: #1f1f3a;
+  background: var(--surface);
   border-radius: 16px;
   padding: 24px;
 }
@@ -257,11 +257,11 @@
 .chartHeader h3 {
   margin: 0;
   font-size: 1rem;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .chartPeriod {
-  color: #6a6a7a;
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 
@@ -295,19 +295,19 @@
 }
 
 .legendLabel {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.85rem;
   flex: 1;
 }
 
 .legendValue {
-  color: #ffffff;
+  color: var(--text-primary);
   font-weight: 600;
   font-size: 0.9rem;
 }
 
 .occupancyBar {
-  background: #1f1f3a;
+  background: var(--surface);
   border-radius: 16px;
   padding: 20px 24px;
   margin-bottom: 24px;
@@ -321,7 +321,7 @@
 }
 
 .barHeader span:first-child {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -333,7 +333,7 @@
 
 .progressBar {
   height: 10px;
-  background: #2a2a4e;
+  background: var(--surface-hover);
   border-radius: 5px;
   overflow: hidden;
   margin-bottom: 10px;
@@ -349,7 +349,7 @@
 .barMeta {
   display: flex;
   justify-content: space-between;
-  color: #6a6a7a;
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 
@@ -372,7 +372,7 @@
 }
 
 .card {
-  background: #1f1f3a;
+  background: var(--surface);
   border-radius: 16px;
   padding: 24px;
 }
@@ -384,7 +384,7 @@
 .cardHeader h3 {
   margin: 0;
   font-size: 1rem;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .analyticsList {
@@ -398,15 +398,16 @@
   justify-content: space-between;
   align-items: center;
   padding: 14px 16px;
-  background: #16213e;
-  border-radius: 10px;
+  background: var(--surface-hover);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
 }
 
 .analyticsInfo {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.85rem;
 }
 
@@ -417,7 +418,7 @@
 .analyticsValue {
   font-weight: 700;
   font-size: 1.1rem;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .maintenanceChart {
@@ -434,7 +435,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.85rem;
 }
 
@@ -464,19 +465,19 @@
 }
 
 .revenueHeader span:first-child {
-  color: #6a6a7a;
+  color: var(--text-muted);
   font-size: 0.85rem;
 }
 
 .revenueAmount {
   font-weight: 700;
   font-size: 1rem;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .revenueBar {
   height: 6px;
-  background: #2a2a4e;
+  background: var(--surface-hover);
   border-radius: 3px;
   overflow: hidden;
 }

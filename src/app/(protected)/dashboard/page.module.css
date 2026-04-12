@@ -14,12 +14,12 @@
 .greeting h1 {
   font-size: 1.75rem;
   margin: 0 0 8px 0;
-  color: #ffffff;
+  color: var(--text-primary);
   font-weight: 700;
 }
 
 .date {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   margin: 0;
 }
@@ -28,21 +28,21 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: linear-gradient(135deg, #2a2a4e 0%, #1f1f3a 100%);
-  border: 1px solid #3a3a5e;
-  color: #a0a0b0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
   padding: 10px 16px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   font-size: 0.85rem;
 }
 
 .settingsBtn:hover {
-  background: linear-gradient(135deg, #3a3a5e 0%, #2a2a4e 100%);
-  color: #ffffff;
+  background: var(--surface-hover);
+  color: var(--text-primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
 }
 
 .settingsIcon {
@@ -54,10 +54,10 @@
 }
 
 .skeleton {
-  background: linear-gradient(90deg, #1f1f3a 25%, #2a2a4e 50%, #1f1f3a 75%);
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 12px;
+  animation: shimmer 1s infinite linear;
+  border-radius: var(--radius-lg);
   height: 200px;
 }
 
@@ -79,6 +79,12 @@
   }
 }
 
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 480px) {
   .statsGrid {
     grid-template-columns: 1fr;
@@ -86,16 +92,60 @@
 }
 
 .statCard {
-  background: #1f1f3a;
+  background: var(--surface);
   padding: 20px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
   gap: 12px;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
-  border: 1px solid transparent;
+  transition: all var(--transition-normal);
+  border: 1px solid var(--border);
+}
+
+.statCard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.residentsCard::before { background: linear-gradient(90deg, #e94560, #c73659); }
+.activeCard::before { background: linear-gradient(90deg, #00d9a5, #00c495); }
+.revenueCard::before { background: linear-gradient(90deg, #ffc947, #ffb800); }
+.pendingCard::before { background: linear-gradient(90deg, #6366f1, #4f46e5); }
+
+.statIcon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-outfit);
+  line-height: 1.2;
+}
+
+.statLabel {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
 }
 
 .statCard:hover {
@@ -132,13 +182,13 @@
 .statValue {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
   font-family: var(--font-outfit);
   line-height: 1.2;
 }
 
 .statLabel {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.8rem;
 }
 
@@ -159,7 +209,7 @@
 
 .sectionTitle {
   font-size: 1.1rem;
-  color: #ffffff;
+  color: var(--text-primary);
   margin: 0 0 16px 0;
   font-weight: 600;
 }
@@ -192,7 +242,7 @@
   align-items: center;
   gap: 8px;
   padding: 20px 16px;
-  background: var(--accent-color, #1f1f3a);
+  background: var(--accent-color, var(--surface));
   border: none;
   border-radius: 14px;
   cursor: pointer;
@@ -211,7 +261,7 @@
 }
 
 .actionLabel {
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 0.8rem;
   font-weight: 600;
   text-align: center;
@@ -231,7 +281,7 @@
 }
 
 .card {
-  background: #1f1f3a;
+  background: var(--surface);
   border-radius: 16px;
   padding: 24px;
 }
@@ -243,7 +293,7 @@
 .cardHeader h3 {
   margin: 0;
   font-size: 1rem;
-  color: #ffffff;
+  color: var(--text-primary);
   font-weight: 600;
 }
 
@@ -312,7 +362,7 @@
   align-items: center;
   gap: 8px;
   font-size: 0.9rem;
-  color: #a0a0b0;
+  color: var(--text-secondary);
 }
 
 .statusDot {
@@ -329,7 +379,7 @@
 .paymentCount {
   font-size: 1rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text-primary);
   text-align: center;
 }
 
@@ -378,7 +428,7 @@
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: linear-gradient(135deg, #1f1f3a 0%, #16213e 100%);
+  background: linear-gradient(135deg, var(--surface) 0%, #16213e 100%);
   border-radius: 14px;
   border: 1px solid #2a2a4e;
 }
@@ -396,7 +446,7 @@
 .summaryValue {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--text-primary);
   font-family: var(--font-outfit);
 }
 
