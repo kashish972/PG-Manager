@@ -5,7 +5,6 @@ import { authOptions } from '@/lib/auth';
 import { personRepository } from '@/repositories/person.repository';
 import { paymentRepository } from '@/repositories/payment.repository';
 import { maintenanceRepository } from '@/repositories/maintenance.repository';
-import { pgRepository } from '@/repositories/pg.repository';
 import { blockRepository } from '@/repositories/block.repository';
 
 export async function getAnalyticsData() {
@@ -17,14 +16,21 @@ export async function getAnalyticsData() {
   const tenantId = session.user.tenantId;
 
   try {
-    const pg = await pgRepository.findBySlug(tenantId);
-    const totalRooms = pg?.totalRooms || 10;
+    const blocks = await blockRepository.findAll(tenantId);
+    
+    const totalRooms = blocks.reduce((sum, block) => sum + block.rooms.length, 0);
     
     const persons = await personRepository.findAll(tenantId);
-    const activePersons = persons.filter(p => p.isActive && p.roomNumber);
+    const activePersons = persons.filter(p => p.isActive && p.roomNumber && p.blockId);
     
-    const occupiedRoomNumbers = new Set(activePersons.map(p => p.roomNumber));
-    const occupiedRooms = occupiedRoomNumbers.size;
+    const occupiedRoomSet = new Set<string>();
+    activePersons.forEach(p => {
+      if (p.blockId && p.roomNumber) {
+        occupiedRoomSet.add(`${p.blockId}:${p.roomNumber}`);
+      }
+    });
+    
+    const occupiedRooms = occupiedRoomSet.size;
     const availableRooms = totalRooms - occupiedRooms;
     const occupancyRate = totalRooms > 0 ? Math.round((occupiedRooms / totalRooms) * 100) : 0;
 
@@ -58,19 +64,23 @@ export async function getAnalyticsData() {
       monthlyRevenue.push({ month: monthName, revenue });
     }
 
-    const blocks = await blockRepository.findAll(tenantId);
     const blockWiseOccupancy = blocks.map(block => {
-      const blockRoomNumbers = new Set(block.rooms.map(r => r.roomNumber));
-      const blockOccupied = Array.from(occupiedRoomNumbers).filter(rn => blockRoomNumbers.has(rn)).length;
+      const blockRoomSet = new Set(block.rooms.map(r => r.roomNumber));
+      const blockOccupied = Array.from(occupiedRoomSet).filter(key => {
+        const [blockId, roomNum] = key.split(':');
+        return blockId === String(block._id) && blockRoomSet.has(roomNum);
+      }).length;
       const blockTotal = block.rooms.length;
       const blockAvailable = blockTotal - blockOccupied;
 
       const acRooms = block.rooms.filter(r => r.isAC);
       const nonAcRooms = block.rooms.filter(r => !r.isAC);
-      const acOccupied = acRooms.filter(r => occupiedRoomNumbers.has(r.roomNumber)).length;
-      const nonAcOccupied = nonAcRooms.filter(r => occupiedRoomNumbers.has(r.roomNumber)).length;
+      
+      const acOccupied = acRooms.filter(r => occupiedRoomSet.has(`${String(block._id)}:${r.roomNumber}`)).length;
+      const nonAcOccupied = nonAcRooms.filter(r => occupiedRoomSet.has(`${String(block._id)}:${r.roomNumber}`)).length;
 
       return {
+        _id: String(block._id),
         name: block.name,
         total: blockTotal,
         occupied: blockOccupied,

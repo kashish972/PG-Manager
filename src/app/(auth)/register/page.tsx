@@ -37,7 +37,7 @@ export default function RegisterPage() {
     newFormData.append('slug', slug);
     newFormData.append('address', address);
     newFormData.append('monthlyRent', monthlyRent);
-    newFormData.append('totalRooms', formData.get('totalRooms') as string || '10');
+    newFormData.append('totalRooms', '0');
     newFormData.append('ownerName', ownerName);
     newFormData.append('ownerEmail', ownerEmail);
     newFormData.append('password', password);
@@ -78,15 +78,9 @@ export default function RegisterPage() {
             <input name="monthlyRent" type="number" placeholder="5000" className={styles.input} required />
           </div>
 
-          <div className={styles.field}>
-            <label className={styles.label}>Total Rooms</label>
-            <input name="totalRooms" type="number" placeholder="10" defaultValue="10" className={styles.input} required />
-          </div>
-
-          <div className={styles.field}>
-            <label className={styles.label}>Default Room Capacity</label>
-            <input name="defaultCapacity" type="number" placeholder="2" defaultValue="2" className={styles.input} required />
-          </div>
+          <p style={{ fontSize: '12px', color: 'var(--text-secondary)', gridColumn: '1 / -1', marginBottom: '8px' }}>
+            You can create blocks and rooms after registering
+          </p>
 
           <div className={styles.field}>
             <label className={styles.label}>Your Name</label>
