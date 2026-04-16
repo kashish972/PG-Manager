@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getVisitors, checkoutVisitor, deleteVisitor, createVisitor } from '@/actions/visitor.actions';
 import { getPersons } from '@/actions/person.actions';
+import { getBlocks } from '@/actions/block.actions';
 import styles from './page.module.css';
 
 export default function VisitorsPage() {
@@ -13,6 +14,7 @@ export default function VisitorsPage() {
   const router = useRouter();
   const [visitors, setVisitors] = useState<any[]>([]);
   const [persons, setPersons] = useState<any[]>([]);
+  const [blocks, setBlocks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
@@ -26,23 +28,46 @@ export default function VisitorsPage() {
 
   useEffect(() => {
     if (session?.user?.role && session.user.role !== 'member') {
-      Promise.all([getVisitors(), getPersons()]).then(([visData, perData]) => {
+      Promise.all([getVisitors(), getPersons(), getBlocks()]).then(([visData, perData, blockData]) => {
         setVisitors(visData || []);
         setPersons(perData || []);
+        setBlocks(blockData || []);
         setLoading(false);
       }).catch(() => setLoading(false));
     }
   }, [session]);
 
-  const handleCheckout = async (id: string) => {
-    await checkoutVisitor(id);
-    const updated = await getVisitors();
-    setVisitors(updated || []);
+  const getPersonName = (personId: string) => {
+    const person = persons.find(p => p._id === personId);
+    return person?.name || 'Unknown';
+  };
+
+  const getPersonRoom = (personId: string) => {
+    const person = persons.find(p => p._id === personId);
+    if (!person) return '';
+    const block = blocks.find(b => String(b._id) === String(person.blockId));
+    const blockName = block?.name || '';
+    const roomNum = person.roomNumber || '';
+    return blockName ? `${blockName} - Room ${roomNum}` : roomNum ? `Room ${roomNum}` : '';
+  };
+
+  const getPersonDisplay = (person: any) => {
+    if (!person) return '';
+    const block = blocks.find(b => String(b._id) === String(person.blockId));
+    const blockName = block?.name || '';
+    const roomNum = person.roomNumber || '';
+    return blockName ? `${person.name} (${blockName} - Room ${roomNum})` : roomNum ? `${person.name} (Room ${roomNum})` : person.name;
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this visitor record?')) return;
     await deleteVisitor(id);
+    const updated = await getVisitors();
+    setVisitors(updated || []);
+  };
+
+  const handleCheckout = async (id: string) => {
+    await checkoutVisitor(id);
     const updated = await getVisitors();
     setVisitors(updated || []);
   };
@@ -54,11 +79,6 @@ export default function VisitorsPage() {
     const updated = await getVisitors();
     setVisitors(updated || []);
     setShowModal(false);
-  };
-
-  const getPersonName = (personId: string) => {
-    const person = persons.find(p => p._id === personId);
-    return person?.name || 'Unknown';
   };
 
   const formatTime = (date: Date | string) => {
@@ -169,7 +189,7 @@ export default function VisitorsPage() {
                     <option value="">Choose resident</option>
                     {persons.map((person: any) => (
                       <option key={person._id} value={person._id}>
-                        {person.name} - Room {person.roomNumber}
+                        {getPersonDisplay(person)}
                       </option>
                     ))}
                   </select>

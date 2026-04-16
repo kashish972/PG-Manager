@@ -4,9 +4,10 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { usePayments, useDeletePayment } from '@/hooks/use-data';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { getPersons } from '@/actions/person.actions';
+import { getBlocks } from '@/actions/block.actions';
 import QRCode from 'react-qr-code';
 import { jsPDF } from 'jspdf';
 import { FileText } from 'lucide-react';
@@ -18,9 +19,15 @@ export default function PaymentsPage() {
   const deletePayment = useDeletePayment();
   const [selectedPayment, setSelectedPayment] = useState<any>(null);
   const [persons, setPersons] = useState<any[]>([]);
+  const [blocks, setBlocks] = useState<any[]>([]);
   const [generating, setGenerating] = useState(false);
 
   const canEdit = session?.user?.role !== 'member';
+
+  useEffect(() => {
+    getPersons().then(setPersons).catch(() => {});
+    getBlocks().then(setBlocks).catch(() => {});
+  }, []);
 
   async function handleDelete(id: string) {
     if (confirm('Are you sure you want to delete this payment?')) {
@@ -56,7 +63,11 @@ export default function PaymentsPage() {
 
   const getPersonRoom = (personId: string) => {
     const person = persons.find(p => p._id === personId);
-    return person?.roomNumber || '';
+    if (!person) return '';
+    const block = blocks.find(b => String(b._id) === String(person.blockId));
+    const blockName = block?.name || '';
+    const roomNum = person.roomNumber || '';
+    return blockName ? `${blockName} - Room ${roomNum}` : roomNum ? `Room ${roomNum}` : '';
   };
 
   const generateReceipt = () => {
@@ -167,7 +178,7 @@ export default function PaymentsPage() {
                     {canEdit && (
                       <td>
                         <div className={styles.actions}>
-                          <Link href={`/payments/add?personId=${payment.personId}`}>
+                          <Link href={`/payments/add?personId=${payment.personId}&paymentId=${payment._id}`}>
                             <Button variant="ghost" size="sm">Edit</Button>
                           </Link>
                           <Button

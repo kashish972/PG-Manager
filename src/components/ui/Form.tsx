@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
 import { getBlocks } from '@/actions/block.actions';
+import { getPersons } from '@/actions/person.actions';
 import styles from './Form.module.css';
 
 const personSchema = z.object({
@@ -44,11 +45,15 @@ export function PersonForm({ onSubmit, defaultValues, isLoading }: PersonFormPro
   const [blocks, setBlocks] = useState<any[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
+    console.log('Loading blocks...');
     getBlocks().then(data => {
+      console.log('blocks data:', JSON.stringify(data));
       setBlocks(data || []);
       setIsLoaded(true);
-    }).catch(() => {
+      console.log('blocks set:', data?.length);
+    }).catch((err) => {
+      console.log('blocks error:', err);
       setIsLoaded(true);
     });
   }, []);
@@ -185,6 +190,26 @@ export function PaymentForm({ onSubmit, defaultValues, isLoading }: PaymentFormP
     defaultValues,
   });
 
+  const [persons, setPersons] = useState<any[]>([]);
+  const [blocks, setBlocks] = useState<any[]>([]);
+
+  useEffect(() => {
+    getPersons().then(data => {
+      setPersons(data || []);
+      return getBlocks();
+    }).then(blockData => {
+      setBlocks(blockData || []);
+    }).catch(() => {});
+  }, []);
+
+  const getPersonDisplay = (person: any) => {
+    if (!person) return '';
+    const block = blocks.find(b => String(b._id) === String(person.blockId));
+    const blockName = block?.name || '';
+    const roomNum = person.roomNumber || '';
+    return blockName ? `${person.name} (${blockName} - Room ${roomNum})` : roomNum ? `${person.name} (Room ${roomNum})` : person.name;
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
       <div className={styles.grid}>
@@ -192,6 +217,11 @@ export function PaymentForm({ onSubmit, defaultValues, isLoading }: PaymentFormP
           <label className={styles.label}>Person *</label>
           <select {...register('personId')} className={styles.select}>
             <option value="">Select Person</option>
+            {persons.map(person => (
+              <option key={person._id} value={person._id}>
+                {getPersonDisplay(person)}
+              </option>
+            ))}
           </select>
           {errors.personId && <span className={styles.error}>{errors.personId.message}</span>}
         </div>

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getComplaints, deleteComplaint, getComplaintStats } from '@/actions/complaint.actions';
 import { getPersons } from '@/actions/person.actions';
+import { getBlocks } from '@/actions/block.actions';
 import styles from './page.module.css';
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -21,6 +22,7 @@ export default function ComplaintsPage() {
   const router = useRouter();
   const [complaints, setComplaints] = useState<any[]>([]);
   const [persons, setPersons] = useState<any[]>([]);
+  const [blocks, setBlocks] = useState<any[]>([]);
   const [stats, setStats] = useState({ open: 0, in_progress: 0, resolved: 0 });
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -36,10 +38,12 @@ export default function ComplaintsPage() {
       Promise.all([
         getComplaints(),
         getPersons(),
+        getBlocks(),
         getComplaintStats()
-      ]).then(([complaintData, personData, statsData]) => {
+      ]).then(([complaintData, personData, blockData, statsData]) => {
         setComplaints(complaintData || []);
         setPersons(personData || []);
+        setBlocks(blockData || []);
         setStats(statsData);
         setLoading(false);
       }).catch(() => setLoading(false));
@@ -53,7 +57,11 @@ export default function ComplaintsPage() {
 
   const getPersonRoom = (personId: string) => {
     const person = persons.find(p => p._id === personId);
-    return person?.roomNumber || '';
+    if (!person) return '';
+    const block = blocks.find(b => String(b._id) === String(person.blockId));
+    const blockName = block?.name || '';
+    const roomNum = person.roomNumber || '';
+    return blockName ? `${blockName} - Room ${roomNum}` : roomNum ? `Room ${roomNum}` : '';
   };
 
   const handleDelete = async (id: string) => {

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getMaintenanceRequests, updateMaintenanceStatus, deleteMaintenanceRequest, getMaintenanceStats } from '@/actions/maintenance.actions';
 import { getPersons } from '@/actions/person.actions';
+import { getBlocks } from '@/actions/block.actions';
 import styles from './page.module.css';
 
 export default function MaintenancePage() {
@@ -13,6 +14,7 @@ export default function MaintenancePage() {
   const router = useRouter();
   const [requests, setRequests] = useState<any[]>([]);
   const [persons, setPersons] = useState<any[]>([]);
+  const [blocks, setBlocks] = useState<any[]>([]);
   const [stats, setStats] = useState({ pending: 0, in_progress: 0, resolved: 0 });
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -28,10 +30,12 @@ export default function MaintenancePage() {
       Promise.all([
         getMaintenanceRequests(),
         getPersons(),
+        getBlocks(),
         getMaintenanceStats()
-      ]).then(([reqData, personData, statsData]) => {
+      ]).then(([reqData, personData, blockData, statsData]) => {
         setRequests(reqData || []);
         setPersons(personData || []);
+        setBlocks(blockData || []);
         setStats(statsData);
         setLoading(false);
       }).catch(() => setLoading(false));
@@ -45,7 +49,11 @@ export default function MaintenancePage() {
 
   const getPersonRoom = (personId: string) => {
     const person = persons.find(p => p._id === personId);
-    return person?.roomNumber || '';
+    if (!person) return '';
+    const block = blocks.find(b => String(b._id) === String(person.blockId));
+    const blockName = block?.name || '';
+    const roomNum = person.roomNumber || '';
+    return blockName ? `${blockName} - Room ${roomNum}` : roomNum ? `Room ${roomNum}` : '';
   };
 
   const handleStatusChange = async (id: string, newStatus: string) => {

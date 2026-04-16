@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPersons, getActivePersons, getPerson, createPerson, updatePerson, deletePerson } from '@/actions/person.actions';
 import { getPayments, getPaymentsByPerson, getPayment, createPayment, updatePayment, deletePayment, getPaymentStats } from '@/actions/payment.actions';
 import { getDashboardStats } from '@/actions/dashboard.actions';
+import { getBlocks } from '@/actions/block.actions';
 
 export function usePersons() {
   return useQuery({
@@ -125,5 +126,12 @@ export function useDashboardStats() {
   return useQuery({
     queryKey: ['dashboard'],
     queryFn: getDashboardStats,
+  });
+}
+
+export function useBlocks() {
+  return useQuery({
+    queryKey: ['blocks'],
+    queryFn: getBlocks,
   });
 }

@@ -102,11 +102,24 @@
   overflow: hidden;
   transition: all var(--transition-normal);
   border: 1px solid var(--border);
+  cursor: pointer;
 }
 
 .statCard:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
+}
+
+.clickHint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  text-align: center;
+}
+
+.statCard:hover .clickHint {
+  opacity: 1;
 }
 
 .statCard::before {
@@ -431,6 +444,32 @@
   background: linear-gradient(135deg, var(--surface) 0%, #16213e 100%);
   border-radius: 14px;
   border: 1px solid #2a2a4e;
+}
+
+.summaryCard.clickable {
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.summaryCard.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent);
+}
+
+.clickHintSmall {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.summaryCard.clickable:hover .clickHintSmall {
+  opacity: 1;
 }
 
 .summaryIcon {

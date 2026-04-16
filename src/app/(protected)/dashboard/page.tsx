@@ -4,6 +4,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { useDashboardStats } from '@/hooks/use-data';
 import { useDashboardPrefs } from '@/hooks/use-dashboard-prefs';
 import { WidgetSettings } from '@/components/dashboard/WidgetSettings';
+import { DashboardDetailModal } from '@/components/dashboard/DashboardDetailModal';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -16,6 +17,7 @@ export default function DashboardPage() {
   const { data: stats, isLoading } = useDashboardStats();
   const { prefs, isLoaded, updatePref, resetToDefaults, toggleAll } = useDashboardPrefs();
   const [showSettings, setShowSettings] = useState(false);
+  const [detailModal, setDetailModal] = useState<'total-residents' | 'active-residents' | 'pending-payments' | 'monthly-revenue' | 'occupied-rooms' | 'occupancy-rate' | 'pending-amount' | null>(null);
 
   useEffect(() => {
     if (session?.user?.role === 'member') {
@@ -78,46 +80,50 @@ export default function DashboardPage() {
         
         <div className={styles.statsGrid}>
           {prefs.totalResidents && (
-            <div className={`${styles.statCard} ${styles.residentsCard}`}>
+            <div className={`${styles.statCard} ${styles.residentsCard}`} onClick={() => setDetailModal('total-residents')}>
               <div className={styles.statIcon}><Users size={24} /></div>
               <div className={styles.statContent}>
                 <span className={styles.statValue}>{stats?.totalPersons || 0}</span>
                 <span className={styles.statLabel}>Total Residents</span>
               </div>
               <div className={styles.statGlow}></div>
+              <span className={styles.clickHint}>Click to view details</span>
             </div>
           )}
 
           {prefs.activeResidents && (
-            <div className={`${styles.statCard} ${styles.activeCard}`}>
+            <div className={`${styles.statCard} ${styles.activeCard}`} onClick={() => setDetailModal('active-residents')}>
               <div className={styles.statIcon}><Check size={24} /></div>
               <div className={styles.statContent}>
                 <span className={styles.statValue}>{stats?.activePersons || 0}</span>
                 <span className={styles.statLabel}>Active Residents</span>
               </div>
               <div className={styles.statGlow}></div>
+              <span className={styles.clickHint}>Click to view details</span>
             </div>
           )}
 
           {prefs.monthlyRevenue && (
-            <div className={`${styles.statCard} ${styles.revenueCard}`}>
+            <div className={`${styles.statCard} ${styles.revenueCard}`} onClick={() => setDetailModal('monthly-revenue')}>
               <div className={styles.statIcon}><IndianRupee size={24} /></div>
               <div className={styles.statContent}>
                 <span className={styles.statValue}>₹{(stats?.monthlyRevenue || 0).toLocaleString()}</span>
                 <span className={styles.statLabel}>This Month</span>
               </div>
               <div className={styles.statGlow}></div>
+              <span className={styles.clickHint}>Click to view details</span>
             </div>
           )}
 
           {prefs.pendingPayments && (
-            <div className={`${styles.statCard} ${styles.pendingCard}`}>
+            <div className={`${styles.statCard} ${styles.pendingCard}`} onClick={() => setDetailModal('pending-payments')}>
               <div className={styles.statIcon}><Clock size={24} /></div>
               <div className={styles.statContent}>
                 <span className={styles.statValue}>{stats?.pendingPayments || 0}</span>
                 <span className={styles.statLabel}>Pending Payments</span>
               </div>
               <div className={styles.statGlow}></div>
+              <span className={styles.clickHint}>Click to view details</span>
             </div>
           )}
         </div>
@@ -203,26 +209,29 @@ export default function DashboardPage() {
         </div>
 
         <div className={styles.summaryRow}>
-          <div className={styles.summaryCard}>
+          <div className={`${styles.summaryCard} ${styles.clickable}`} onClick={() => setDetailModal('occupied-rooms')}>
             <div className={styles.summaryIcon}><Home size={20} /></div>
             <div className={styles.summaryContent}>
               <span className={styles.summaryValue}>{stats?.activePersons || 0}</span>
               <span className={styles.summaryLabel}>Rooms Occupied</span>
             </div>
+            <span className={styles.clickHintSmall}>Click to view</span>
           </div>
-          <div className={styles.summaryCard}>
+          <div className={`${styles.summaryCard} ${styles.clickable}`} onClick={() => setDetailModal('occupancy-rate')}>
             <div className={styles.summaryIcon}><TrendingUp size={20} /></div>
             <div className={styles.summaryContent}>
               <span className={styles.summaryValue}>{stats?.totalPersons ? Math.round((stats.activePersons / stats.totalPersons) * 100) : 0}%</span>
               <span className={styles.summaryLabel}>Occupancy Rate</span>
             </div>
+            <span className={styles.clickHintSmall}>Click to view</span>
           </div>
-          <div className={styles.summaryCard}>
+          <div className={`${styles.summaryCard} ${styles.clickable}`} onClick={() => setDetailModal('pending-amount')}>
             <div className={styles.summaryIcon}><DollarSign size={20} /></div>
             <div className={styles.summaryContent}>
               <span className={styles.summaryValue}>₹{((stats?.totalRent || 0) - (stats?.monthlyRevenue || 0)).toLocaleString()}</span>
               <span className={styles.summaryLabel}>Pending Amount</span>
             </div>
+            <span className={styles.clickHintSmall}>Click to view</span>
           </div>
         </div>
       </div>
@@ -236,6 +245,12 @@ export default function DashboardPage() {
           onClose={() => setShowSettings(false)}
         />
       )}
+
+      <DashboardDetailModal
+        isOpen={detailModal !== null}
+        onClose={() => setDetailModal(null)}
+        type={detailModal || 'total-residents'}
+      />
     </MainLayout>
   );
 }

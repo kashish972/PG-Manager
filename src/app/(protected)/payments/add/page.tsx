@@ -1,27 +1,53 @@
 'use client';
 
 import { MainLayout } from '@/components/layout/MainLayout';
-import { useCreatePayment, useActivePersons } from '@/hooks/use-data';
+import { useCreatePayment, useUpdatePayment, useActivePersons } from '@/hooks/use-data';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
+import { getBlocks } from '@/actions/block.actions';
+import { getPayment } from '@/actions/payment.actions';
 import styles from './page.module.css';
 
 function AddPaymentForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const preselectedPersonId = searchParams.get('personId');
+  const preselectedPaymentId = searchParams.get('paymentId');
+  const isEditing = !!preselectedPaymentId;
   const { data: persons } = useActivePersons();
   const createPayment = useCreatePayment();
+  const updatePayment = useUpdatePayment();
+  const [blocks, setBlocks] = useState<any[]>([]);
   
-  const [formData, setFormData] = useState({
+  useEffect(() => {
+    getBlocks().then(setBlocks).catch(() => {});
+  }, []);
+
+  const [formData, setFormData] = useState<{
+    personId: string;
+    amount: string;
+    paymentDate: string;
+    month: string;
+    status: string;
+    paymentMethod: string;
+    notes: string;
+  }>({
     personId: preselectedPersonId || '',
     amount: '',
     paymentDate: new Date().toISOString().split('T')[0],
     month: new Date().toISOString().slice(0, 7),
-    status: 'pending' as const,
-    paymentMethod: 'cash' as const,
+    status: 'pending',
+    paymentMethod: 'cash',
     notes: '',
   });
+
+  const getPersonDisplay = (person: any) => {
+    if (!person) return '';
+    const block = blocks.find(b => String(b._id) === String(person.blockId));
+    const blockName = block?.name || '';
+    const roomNum = person.roomNumber || '';
+    return blockName ? `${person.name} (${blockName} - Room ${roomNum})` : roomNum ? `${person.name} (Room ${roomNum})` : person.name;
+  };
 
   useEffect(() => {
     if (preselectedPersonId && persons) {
@@ -32,6 +58,26 @@ function AddPaymentForm() {
     }
   }, [preselectedPersonId, persons]);
 
+  useEffect(() => {
+    async function loadPayment() {
+      if (preselectedPaymentId) {
+        const payment = await getPayment(preselectedPaymentId);
+        if (payment) {
+          setFormData({
+            personId: String(payment.personId || ''),
+            amount: String(payment.amount || ''),
+            paymentDate: payment.paymentDate ? new Date(payment.paymentDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            month: payment.month || new Date().toISOString().slice(0, 7),
+            status: (payment.status || 'pending') as 'pending' | 'paid' | 'overdue',
+            paymentMethod: (payment.paymentMethod || 'cash') as 'cash' | 'transfer' | 'upi',
+            notes: payment.notes || '',
+          });
+        }
+      }
+    }
+    loadPayment();
+  }, [preselectedPaymentId]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const fd = new FormData();
@@ -39,14 +85,18 @@ function AddPaymentForm() {
       fd.append(key, value);
     });
     
-    await createPayment.mutateAsync(fd);
+    if (isEditing) {
+      await updatePayment.mutateAsync({ id: preselectedPaymentId, formData: fd });
+    } else {
+      await createPayment.mutateAsync(fd);
+    }
     router.push('/payments');
   }
 
   return (
     <MainLayout>
       <div className={styles.container}>
-        <h1 className={styles.title}>Add Payment</h1>
+        <h1 className={styles.title}>{isEditing ? 'Edit Payment' : 'Add Payment'}</h1>
         
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.grid}>
@@ -61,7 +111,7 @@ function AddPaymentForm() {
                 <option value="">Select Person</option>
                 {persons?.map((person: any) => (
                   <option key={person._id} value={person._id}>
-                    {person.name} - Room {person.roomNumber}
+                    {getPersonDisplay(person)}
                   </option>
                 ))}
               </select>
@@ -136,8 +186,8 @@ function AddPaymentForm() {
             </div>
           </div>
 
-          <button type="submit" disabled={createPayment.isPending} className={styles.submitBtn}>
-            {createPayment.isPending ? 'Saving...' : 'Save'}
+          <button type="submit" disabled={createPayment.isPending || updatePayment.isPending} className={styles.submitBtn}>
+            {createPayment.isPending || updatePayment.isPending ? 'Saving...' : isEditing ? 'Update' : 'Save'}
           </button>
         </form>
       </div>
