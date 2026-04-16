@@ -12,6 +12,7 @@
   /* Status Colors */
   --success: #10b981;
   --success-hover: #059669;
+  --success-glow: rgba(16, 185, 129, 0.3);
   --warning: #f59e0b;
   --warning-hover: #d97706;
   --error: #ef4444;
@@ -66,6 +67,7 @@
   --accent: #e94560;
   --accent-hover: #d63d56;
   --accent-glow: rgba(233, 69, 96, 0.4);
+  --success-glow: rgba(16, 185, 129, 0.3);
   
   --background: #0f172a;
   --background-secondary: #1e293b;

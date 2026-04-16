@@ -110,7 +110,7 @@
 
 .addBtn {
   background: linear-gradient(135deg, var(--success) 0%, var(--success-hover) 100%);
-  color: var(--primary);
+  color: white;
   border: none;
   padding: 12px 24px;
   border-radius: var(--radius-sm);
@@ -258,7 +258,7 @@
 
 .submitBtn {
   background: linear-gradient(135deg, var(--success) 0%, var(--success-hover) 100%);
-  color: var(--primary);
+  color: white;
   border: none;
   padding: 12px 24px;
   border-radius: var(--radius-sm);

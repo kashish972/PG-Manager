@@ -3,9 +3,9 @@
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { getRoomsWithOccupancy, createBlock, addRoom, updateRoom, deleteRoom, renameBlock, deleteBlock } from '@/actions/block.actions';
-import { Plus, Home, Snowflake, Flame, Edit2, Trash2, X, Check, Building2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Home, Snowflake, Flame, Edit2, Trash2, X, Check, Building2, ChevronDown, ChevronUp, Filter, XCircle, Users, Phone, Mail, Calendar, MapPin } from 'lucide-react';
 import styles from './page.module.css';
 
 interface IRoom {
@@ -19,6 +19,9 @@ interface IBlock {
   name: string;
   rooms: IRoom[];
 }
+
+type StatusFilter = 'all' | 'occupied' | 'filled' | 'partial' | 'vacant';
+type ACFilter = 'all' | 'ac' | 'non-ac';
 
 export default function RoomsPage() {
   const { data: session, status } = useSession();
@@ -43,6 +46,15 @@ export default function RoomsPage() {
   const [confirmModal, setConfirmModal] = useState<{ show: boolean; message: string; onConfirm: () => void }>({ show: false, message: '', onConfirm: () => {} });
   const [error, setError] = useState('');
   const [collapsedBlocks, setCollapsedBlocks] = useState<Set<string>>(new Set());
+  const [showFilters, setShowFilters] = useState(false);
+  
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [acFilter, setAcFilter] = useState<ACFilter>('all');
+  const [selectedCapacities, setSelectedCapacities] = useState<Set<number>>(new Set());
+  const [selectedBlocks, setSelectedBlocks] = useState<Set<string>>(new Set());
+  
+  const [selectedRoom, setSelectedRoom] = useState<{ block: IBlock; room: IRoom; roomIndex: number; occupants: any[] } | null>(null);
+  const [showRoomDetailModal, setShowRoomDetailModal] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -197,6 +209,12 @@ export default function RoomsPage() {
     setError('');
   };
 
+  const openRoomDetailModal = (block: IBlock, room: IRoom, roomIndex: number) => {
+    const occupants = getOccupants(block._id, room.roomNumber);
+    setSelectedRoom({ block, room, roomIndex, occupants });
+    setShowRoomDetailModal(true);
+  };
+
   const toggleBlockCollapse = (blockId: string) => {
     setCollapsedBlocks(prev => {
       const newSet = new Set(prev);
@@ -217,6 +235,82 @@ export default function RoomsPage() {
       String(p.blockId) === String(blockId)
   );
 };
+
+  const allCapacities = useMemo(() => {
+    const capacities = new Set<number>();
+    blocks.forEach(block => {
+      block.rooms.forEach(room => {
+        capacities.add(room.capacity);
+      });
+    });
+    return Array.from(capacities).sort((a, b) => a - b);
+  }, [blocks]);
+
+  const toggleCapacityFilter = (capacity: number) => {
+    setSelectedCapacities(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(capacity)) {
+        newSet.delete(capacity);
+      } else {
+        newSet.add(capacity);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleBlockFilter = (blockId: string) => {
+    setSelectedBlocks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(blockId)) {
+        newSet.delete(blockId);
+      } else {
+        newSet.add(blockId);
+      }
+      return newSet;
+    });
+  };
+
+  const clearAllFilters = () => {
+    setStatusFilter('all');
+    setAcFilter('all');
+    setSelectedCapacities(new Set());
+    setSelectedBlocks(new Set());
+  };
+
+  const hasActiveFilters = statusFilter !== 'all' || acFilter !== 'all' || selectedCapacities.size > 0 || selectedBlocks.size > 0;
+
+  const filteredBlocks = useMemo(() => {
+    return blocks.map(block => {
+      if (selectedBlocks.size > 0 && !selectedBlocks.has(block._id)) {
+        return { ...block, rooms: [] };
+      }
+      
+      const filteredRooms = block.rooms.filter(room => {
+        const occupants = getOccupants(block._id, room.roomNumber);
+        const isFull = occupants.length >= room.capacity;
+        const isPartial = occupants.length > 0 && occupants.length < room.capacity;
+        const isVacant = occupants.length === 0;
+
+        if (statusFilter === 'occupied' && isVacant) return false;
+        if (statusFilter === 'filled' && !isFull) return false;
+        if (statusFilter === 'partial' && !isPartial) return false;
+        if (statusFilter === 'vacant' && !isVacant) return false;
+
+        if (acFilter === 'ac' && !room.isAC) return false;
+        if (acFilter === 'non-ac' && room.isAC) return false;
+
+        if (selectedCapacities.size > 0 && !selectedCapacities.has(room.capacity)) return false;
+
+        return true;
+      });
+
+      return { ...block, rooms: filteredRooms };
+    }).filter(block => block.rooms.length > 0);
+  }, [blocks, persons, statusFilter, acFilter, selectedCapacities, selectedBlocks]);
+
+  const getFilteredRoomCount = () => {
+    return filteredBlocks.reduce((sum, block) => sum + block.rooms.length, 0);
+  };
 
   if (loading || session?.user?.role === 'member') {
     return (
@@ -240,6 +334,122 @@ export default function RoomsPage() {
             <Plus size={18} />
             Add Block
           </button>
+        </div>
+
+        <div className={styles.filterSection}>
+          <div className={styles.filterHeader}>
+            <button 
+              className={`${styles.filterToggleBtn} ${showFilters ? styles.active : ''}`}
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              <Filter size={18} />
+              Filters
+              {hasActiveFilters && <span className={styles.filterBadge}>{statusFilter !== 'all' ? 1 : 0 + (acFilter !== 'all' ? 1 : 0) + selectedCapacities.size + selectedBlocks.size}</span>}
+            </button>
+            {hasActiveFilters && (
+              <button className={styles.clearFiltersBtn} onClick={clearAllFilters}>
+                <XCircle size={16} />
+                Clear Filters
+              </button>
+            )}
+            <span className={styles.filterResultCount}>
+              Showing {getFilteredRoomCount()} of {totalRooms} rooms
+            </span>
+          </div>
+
+          {showFilters && (
+            <div className={styles.filterContent}>
+              <div className={styles.filterGroup}>
+                <span className={styles.filterLabel}>Status:</span>
+                <div className={styles.filterOptions}>
+                  <button 
+                    className={`${styles.filterChip} ${statusFilter === 'all' ? styles.active : ''}`}
+                    onClick={() => setStatusFilter('all')}
+                  >
+                    All
+                  </button>
+                  <button 
+                    className={`${styles.filterChip} ${statusFilter === 'occupied' ? styles.active : ''}`}
+                    onClick={() => setStatusFilter('occupied')}
+                  >
+                    <Home size={14} /> Occupied
+                  </button>
+                  <button 
+                    className={`${styles.filterChip} ${statusFilter === 'filled' ? styles.active : ''}`}
+                    onClick={() => setStatusFilter('filled')}
+                  >
+                    Filled
+                  </button>
+                  <button 
+                    className={`${styles.filterChip} ${statusFilter === 'partial' ? styles.active : ''}`}
+                    onClick={() => setStatusFilter('partial')}
+                  >
+                    Partial
+                  </button>
+                  <button 
+                    className={`${styles.filterChip} ${statusFilter === 'vacant' ? styles.active : ''}`}
+                    onClick={() => setStatusFilter('vacant')}
+                  >
+                    Vacant
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.filterGroup}>
+                <span className={styles.filterLabel}>AC Type:</span>
+                <div className={styles.filterOptions}>
+                  <button 
+                    className={`${styles.filterChip} ${acFilter === 'all' ? styles.active : ''}`}
+                    onClick={() => setAcFilter('all')}
+                  >
+                    All
+                  </button>
+                  <button 
+                    className={`${styles.filterChip} ${acFilter === 'ac' ? styles.active : ''}`}
+                    onClick={() => setAcFilter('ac')}
+                  >
+                    <Snowflake size={14} /> AC
+                  </button>
+                  <button 
+                    className={`${styles.filterChip} ${acFilter === 'non-ac' ? styles.active : ''}`}
+                    onClick={() => setAcFilter('non-ac')}
+                  >
+                    <Flame size={14} /> Non-AC
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.filterGroup}>
+                <span className={styles.filterLabel}>Capacity:</span>
+                <div className={styles.filterOptions}>
+                  {allCapacities.map(capacity => (
+                    <button 
+                      key={capacity}
+                      className={`${styles.filterChip} ${selectedCapacities.has(capacity) ? styles.active : ''}`}
+                      onClick={() => toggleCapacityFilter(capacity)}
+                    >
+                      {capacity} Bed{capacity > 1 ? 's' : ''}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.filterGroup}>
+                <span className={styles.filterLabel}>Block:</span>
+                <div className={styles.filterOptions}>
+                  {blocks.map(block => (
+                    <button 
+                      key={block._id}
+                      className={`${styles.filterChip} ${selectedBlocks.has(block._id) ? styles.active : ''}`}
+                      onClick={() => toggleBlockFilter(block._id)}
+                    >
+                      <Building2 size={14} /> {block.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className={styles.statsGrid}>
@@ -289,7 +499,18 @@ export default function RoomsPage() {
                 </button>
               </div>
             )}
-            {blocks.map((block) => (
+            {filteredBlocks.length === 0 ? (
+              <div className={styles.noResults}>
+                <Filter size={48} />
+                <h3>No rooms match your filters</h3>
+                <p>Try adjusting your filter criteria</p>
+                <button className={styles.clearFiltersBtn} onClick={clearAllFilters}>
+                  <XCircle size={16} />
+                  Clear Filters
+                </button>
+              </div>
+            ) : (
+            filteredBlocks.map((block) => (
                 <div key={block._id} className={styles.blockCard}>
                 <div className={styles.blockHeader}>
                   <div className={styles.blockTitle}>
@@ -342,7 +563,8 @@ export default function RoomsPage() {
                       return (
                         <div 
                           key={roomKey} 
-                          className={`${styles.roomCard} ${isVacant ? styles.vacant : styles.occupied} ${selectedRoomsToDelete.has(roomKey) ? styles.selected : ''}`}
+                          className={`${styles.roomCard} ${isVacant ? styles.vacant : styles.occupied} ${selectedRoomsToDelete.has(roomKey) ? styles.selected : ''} ${styles.clickable}`}
+                          onClick={() => openRoomDetailModal(block, room, index)}
                         >
                           <div className={styles.roomHeader}>
                             <div className={styles.roomSelect}>
@@ -403,7 +625,8 @@ export default function RoomsPage() {
                 </div>
                 )}
               </div>
-            ))}
+            ))
+            )}
           </div>
         )}
 
@@ -637,6 +860,119 @@ export default function RoomsPage() {
                 <button onClick={() => { confirmModal.onConfirm(); setConfirmModal({ ...confirmModal, show: false }); }} className={styles.submitBtn} style={{ background: 'var(--error)' }}>
                   <Trash2 size={16} />
                   Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Room Detail Modal */}
+        {showRoomDetailModal && selectedRoom && (
+          <div className={styles.modalOverlay} onClick={() => setShowRoomDetailModal(false)}>
+            <div className={styles.modal} onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
+              <div className={styles.modalHeader}>
+                <div className={styles.modalHeaderContent}>
+                  <div className={styles.roomDetailTitle}>
+                    <Home size={24} />
+                    <div>
+                      <h2>{selectedRoom.block.name} - Room {selectedRoom.room.roomNumber}</h2>
+                      <span className={styles.roomDetailSubtitle}>
+                        {selectedRoom.room.isAC ? (
+                          <><Snowflake size={14} /> AC Room</>
+                        ) : (
+                          <><Flame size={14} /> Non-AC Room</>
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <button className={styles.closeBtn} onClick={() => setShowRoomDetailModal(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+              <div className={styles.modalContent}>
+                <div className={styles.roomDetailStats}>
+                  <div className={styles.roomDetailStat}>
+                    <Users size={20} />
+                    <div>
+                      <span className={styles.roomDetailStatValue}>{selectedRoom.occupants.length}/{selectedRoom.room.capacity}</span>
+                      <span className={styles.roomDetailStatLabel}>Beds Occupied</span>
+                    </div>
+                  </div>
+                  <div className={styles.roomDetailStat}>
+                    <MapPin size={20} />
+                    <div>
+                      <span className={styles.roomDetailStatValue}>{selectedRoom.block.name}</span>
+                      <span className={styles.roomDetailStatLabel}>Block</span>
+                    </div>
+                  </div>
+                  <div className={styles.roomDetailStat}>
+                    <Building2 size={20} />
+                    <div>
+                      <span className={styles.roomDetailStatValue}>{selectedRoom.room.capacity}</span>
+                      <span className={styles.roomDetailStatLabel}>Total Beds</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className={styles.roomDetailStatus}>
+                  {selectedRoom.occupants.length >= selectedRoom.room.capacity ? (
+                    <span className={styles.statusFilled}>Filled</span>
+                  ) : selectedRoom.occupants.length > 0 ? (
+                    <span className={styles.statusPartial}>Partial ({selectedRoom.occupants.length}/{selectedRoom.room.capacity})</span>
+                  ) : (
+                    <span className={styles.statusVacant}>Vacant</span>
+                  )}
+                </div>
+
+                <div className={styles.roomDetailResidents}>
+                  <h4 className={styles.roomDetailSectionTitle}>
+                    <Users size={18} />
+                    Residents ({selectedRoom.occupants.length})
+                  </h4>
+                  {selectedRoom.occupants.length > 0 ? (
+                    <div className={styles.roomDetailResidentList}>
+                      {selectedRoom.occupants.map((occupant: any) => (
+                        <div key={occupant._id} className={styles.roomDetailResidentCard}>
+                          <div className={styles.roomDetailResidentAvatar}>
+                            {occupant.name?.[0]?.toUpperCase() || 'U'}
+                          </div>
+                          <div className={styles.roomDetailResidentInfo}>
+                            <span className={styles.roomDetailResidentName}>{occupant.name}</span>
+                            <div className={styles.roomDetailResidentContact}>
+                              <span><Phone size={12} /> {occupant.phone}</span>
+                              {occupant.email && <span><Mail size={12} /> {occupant.email}</span>}
+                            </div>
+                            {occupant.moveInDate && (
+                              <span className={styles.roomDetailResidentMovein}>
+                                <Calendar size={12} /> Moved in: {new Date(occupant.moveInDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className={styles.roomDetailEmpty}>
+                      <Home size={40} />
+                      <p>No residents in this room</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className={styles.modalActions}>
+                <button onClick={() => setShowRoomDetailModal(false)} className={styles.cancelBtn}>
+                  Close
+                </button>
+                <button 
+                  onClick={() => {
+                    setShowRoomDetailModal(false);
+                    openEditRoomModal(selectedRoom.block._id, selectedRoom.roomIndex, selectedRoom.room);
+                  }} 
+                  className={styles.submitBtn}
+                >
+                  <Edit2 size={16} />
+                  Edit Room
                 </button>
               </div>
             </div>

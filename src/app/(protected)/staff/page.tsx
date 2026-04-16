@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getStaff, getStaffStats, deleteStaff } from '@/actions/staff.actions';
-import { User, Wrench, ChefHat, Shield, Sparkles, ClipboardList } from 'lucide-react';
+import { User, Wrench, ChefHat, Shield, Sparkles, ClipboardList, Trash2 } from 'lucide-react';
 import styles from './page.module.css';
 
 const ROLE_ICONS: Record<string, any> = {
@@ -147,9 +147,18 @@ export default function StaffPage() {
                     <h3>{member.name}</h3>
                     <span className={styles.role}>{ROLE_LABELS[member.role] || member.role}</span>
                   </div>
-                  <span className={`${styles.status} ${member.isActive ? styles.active : styles.inactive}`}>
-                    {member.isActive ? 'Active' : 'Inactive'}
-                  </span>
+                  <div className={styles.headerActions}>
+                    <span className={`${styles.status} ${member.isActive ? styles.active : styles.inactive}`}>
+                      {member.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                    <button 
+                      className={styles.deleteBtn}
+                      onClick={() => handleDelete(member._id)}
+                      title="Delete Staff"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
                 
                 <div className={styles.details}>
@@ -181,13 +190,6 @@ export default function StaffPage() {
                     Pay Salary
                   </button>
                 </div>
-
-                <button 
-                  className={styles.deleteBtn}
-                  onClick={() => handleDelete(member._id)}
-                >
-                  Delete
-                </button>
               </div>
               );
             })}

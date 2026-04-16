@@ -12,11 +12,12 @@
 }
 
 .modal {
-  background: #1a1a2e;
+  background: var(--surface);
   border-radius: 12px;
   width: 90%;
   max-width: 400px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
 }
 
 .header {
@@ -24,11 +25,11 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #2a2a4e;
+  border-bottom: 1px solid var(--border);
 }
 
 .header h2 {
-  color: #ffffff;
+  color: var(--text-primary);
   margin: 0;
   font-size: 1.25rem;
 }
@@ -36,7 +37,7 @@
 .closeBtn {
   background: none;
   border: none;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 1.5rem;
   cursor: pointer;
   padding: 4px 8px;
@@ -45,7 +46,7 @@
 }
 
 .closeBtn:hover {
-  background: #2a2a4e;
+  background: var(--surface-hover);
 }
 
 .content {
@@ -61,9 +62,9 @@
 .bulkBtn {
   flex: 1;
   padding: 8px 16px;
-  background: #2a2a4e;
-  border: 1px solid #3a3a5e;
-  color: #a0a0b0;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.875rem;
@@ -71,8 +72,8 @@
 }
 
 .bulkBtn:hover:not(:disabled) {
-  background: #3a3a5e;
-  color: #ffffff;
+  background: var(--surface-active);
+  color: var(--text-primary);
 }
 
 .bulkBtn:disabled {
@@ -91,12 +92,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: #16213e;
+  background: var(--surface-hover);
   border-radius: 8px;
+  border: 1px solid var(--border);
 }
 
 .label {
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
@@ -104,7 +106,7 @@
   position: relative;
   width: 48px;
   height: 26px;
-  background: #2a2a4e;
+  background: var(--border);
   border: none;
   border-radius: 13px;
   cursor: pointer;
@@ -112,7 +114,7 @@
 }
 
 .toggle.active {
-  background: #e94560;
+  background: var(--accent);
 }
 
 .toggleSlider {
@@ -121,9 +123,10 @@
   left: 3px;
   width: 20px;
   height: 20px;
-  background: #ffffff;
+  background: white;
   border-radius: 50%;
   transition: transform 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .toggle.active .toggleSlider {
@@ -134,15 +137,15 @@
   display: flex;
   gap: 12px;
   padding: 16px 24px;
-  border-top: 1px solid #2a2a4e;
+  border-top: 1px solid var(--border);
 }
 
 .resetBtn {
   flex: 1;
   padding: 10px 16px;
   background: transparent;
-  border: 1px solid #e94560;
-  color: #e94560;
+  border: 1px solid var(--accent);
+  color: var(--accent);
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.875rem;
@@ -156,9 +159,9 @@
 .doneBtn {
   flex: 1;
   padding: 10px 16px;
-  background: #e94560;
+  background: var(--accent);
   border: none;
-  color: #ffffff;
+  color: white;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.875rem;
@@ -166,5 +169,5 @@
 }
 
 .doneBtn:hover {
-  background: #d63d56;
+  background: var(--accent-hover);
 }
