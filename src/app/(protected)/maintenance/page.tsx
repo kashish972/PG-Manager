@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { getMaintenanceRequests, updateMaintenanceStatus, deleteMaintenanceRequest, getMaintenanceStats } from '@/actions/maintenance.actions';
 import { getPersons } from '@/actions/person.actions';
 import { getBlocks } from '@/actions/block.actions';
+import { SkeletonStats } from '@/components/ui/Skeleton';
 import styles from './page.module.css';
 
 export default function MaintenancePage() {
@@ -97,7 +98,17 @@ export default function MaintenancePage() {
   if (loading) {
     return (
       <MainLayout>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.skeletonTitle}></div>
+          </div>
+          <SkeletonStats />
+          <div className={styles.skeletonList}>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className={styles.skeletonItem}></div>
+            ))}
+          </div>
+        </div>
       </MainLayout>
     );
   }

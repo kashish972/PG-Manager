@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getInventory, deleteInventoryItem } from '@/actions/inventory.actions';
+import { SkeletonTable } from '@/components/ui/Skeleton';
 import styles from './page.module.css';
 
 export default function InventoryPage() {
@@ -56,7 +57,12 @@ export default function InventoryPage() {
   if (loading || !canManage) {
     return (
       <MainLayout>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.skeletonTitle}></div>
+          </div>
+          <SkeletonTable rows={6} />
+        </div>
       </MainLayout>
     );
   }

@@ -5,6 +5,7 @@ import { useDashboardStats } from '@/hooks/use-data';
 import { useDashboardPrefs } from '@/hooks/use-dashboard-prefs';
 import { WidgetSettings } from '@/components/dashboard/WidgetSettings';
 import { DashboardDetailModal } from '@/components/dashboard/DashboardDetailModal';
+import { SkeletonStats } from '@/components/ui/Skeleton';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -44,8 +45,26 @@ export default function DashboardPage() {
   if (isLoading || !isLoaded || session?.user?.role === 'member') {
     return (
       <MainLayout>
-        <div className={styles.loading}>
-          <div className={styles.skeleton}></div>
+        <div className={styles.container}>
+          <div className={styles.heroSection}>
+            <div className={styles.greeting}>
+              <div className={styles.skeletonTitle}></div>
+              <div className={styles.skeletonDate}></div>
+            </div>
+          </div>
+          <SkeletonStats />
+          <div className={styles.quickActions}>
+            <div className={styles.skeletonActions}></div>
+          </div>
+          <div className={styles.bottomGrid}>
+            <div className={styles.skeletonCard}></div>
+            <div className={styles.skeletonCard}></div>
+          </div>
+          <div className={styles.summaryRow}>
+            <div className={styles.skeletonSummary}></div>
+            <div className={styles.skeletonSummary}></div>
+            <div className={styles.skeletonSummary}></div>
+          </div>
         </div>
       </MainLayout>
     );

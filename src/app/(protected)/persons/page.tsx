@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { useEffect, useState } from 'react';
 import { getBlocks } from '@/actions/block.actions';
+import { SkeletonTable } from '@/components/ui/Skeleton';
 import styles from './page.module.css';
 
 export default function PersonsPage() {
@@ -39,7 +40,12 @@ export default function PersonsPage() {
   if (isLoading) {
     return (
       <MainLayout>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.skeletonTitle}></div>
+          </div>
+          <SkeletonTable rows={8} />
+        </div>
       </MainLayout>
     );
   }

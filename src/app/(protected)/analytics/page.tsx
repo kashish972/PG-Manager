@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { getAnalyticsData } from '@/actions/analytics.actions';
 import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { BarChart3, Home, IndianRupee, TrendingUp, Users, FileText, Wrench, Check, X, DollarSign, TrendingUp as TrendingUpIcon, Diamond, Snowflake, Flame } from 'lucide-react';
+import { SkeletonStats } from '@/components/ui/Skeleton';
 import styles from './page.module.css';
 
 export default function AnalyticsPage() {
@@ -35,8 +36,17 @@ export default function AnalyticsPage() {
   if (loading || !data || session?.user?.role === 'member') {
     return (
       <MainLayout>
-        <div className={styles.loading}>
-          <div className={styles.skeleton}></div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.skeletonTitle}></div>
+            <div className={styles.skeletonSubtitle}></div>
+          </div>
+          <SkeletonStats />
+          <div className={styles.skeletonChart}></div>
+          <div className={styles.bottomGrid}>
+            <div className={styles.skeletonCard}></div>
+            <div className={styles.skeletonCard}></div>
+          </div>
         </div>
       </MainLayout>
     );

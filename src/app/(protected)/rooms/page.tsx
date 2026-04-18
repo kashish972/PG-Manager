@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, useMemo } from 'react';
 import { getRoomsWithOccupancy, createBlock, addRoom, updateRoom, deleteRoom, renameBlock, deleteBlock } from '@/actions/block.actions';
 import { Plus, Home, Snowflake, Flame, Edit2, Trash2, X, Check, Building2, ChevronDown, ChevronUp, Filter, XCircle, Users, Phone, Mail, Calendar, MapPin } from 'lucide-react';
+import { SkeletonStats } from '@/components/ui/Skeleton';
 import styles from './page.module.css';
 
 interface IRoom {
@@ -315,7 +316,17 @@ export default function RoomsPage() {
   if (loading || session?.user?.role === 'member') {
     return (
       <MainLayout>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.skeletonTitle}></div>
+          </div>
+          <SkeletonStats />
+          <div className={styles.skeletonGrid}>
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className={styles.skeletonBlock}></div>
+            ))}
+          </div>
+        </div>
       </MainLayout>
     );
   }

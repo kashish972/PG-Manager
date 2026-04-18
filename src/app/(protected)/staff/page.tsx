@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getStaff, getStaffStats, deleteStaff } from '@/actions/staff.actions';
 import { User, Wrench, ChefHat, Shield, Sparkles, ClipboardList, Trash2 } from 'lucide-react';
+import { SkeletonStats } from '@/components/ui/Skeleton';
 import styles from './page.module.css';
 
 const ROLE_ICONS: Record<string, any> = {
@@ -75,7 +76,22 @@ export default function StaffPage() {
   if (loading || session?.user?.role === 'member') {
     return (
       <MainLayout>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.skeletonTitle}></div>
+          </div>
+          <SkeletonStats />
+          <div className={styles.filters}>
+            <div className={styles.skeletonFilter}></div>
+            <div className={styles.skeletonFilter}></div>
+            <div className={styles.skeletonFilter}></div>
+          </div>
+          <div className={styles.grid}>
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className={styles.skeletonCard}></div>
+            ))}
+          </div>
+        </div>
       </MainLayout>
     );
   }

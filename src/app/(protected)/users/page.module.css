@@ -36,6 +36,21 @@
   animation: fadeIn 0.3s ease forwards;
 }
 
+.skeletonTitle {
+  height: 36px;
+  width: 100px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+  margin-bottom: 32px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .tableWrapper {
   background: var(--surface);
   border-radius: var(--radius-lg);

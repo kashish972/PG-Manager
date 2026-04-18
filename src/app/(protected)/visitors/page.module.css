@@ -35,6 +35,35 @@
   padding: 60px 20px;
 }
 
+.skeletonTitle {
+  height: 36px;
+  width: 160px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+  margin-bottom: 32px;
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeletonItem {
+  height: 80px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-lg);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .addBtn {
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: white;

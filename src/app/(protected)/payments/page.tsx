@@ -11,6 +11,7 @@ import { getBlocks } from '@/actions/block.actions';
 import QRCode from 'react-qr-code';
 import { jsPDF } from 'jspdf';
 import { FileText } from 'lucide-react';
+import { SkeletonStats, SkeletonTable } from '@/components/ui/Skeleton';
 import styles from './page.module.css';
 
 export default function PaymentsPage() {
@@ -113,7 +114,13 @@ export default function PaymentsPage() {
   if (isLoading) {
     return (
       <MainLayout>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.skeletonTitle}></div>
+          </div>
+          <SkeletonStats />
+          <SkeletonTable rows={8} />
+        </div>
       </MainLayout>
     );
   }

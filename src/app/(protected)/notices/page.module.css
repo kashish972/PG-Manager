@@ -40,6 +40,77 @@
   animation: fadeIn 0.3s ease forwards;
 }
 
+.skeletonTitle {
+  height: 36px;
+  width: 180px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeletonCard {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  border: 1px solid var(--border);
+  min-height: 160px;
+}
+
+.skeletonBadge {
+  height: 24px;
+  width: 80px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-full);
+  margin-bottom: 16px;
+}
+
+.skeletonContent {
+  margin-bottom: 16px;
+}
+
+.skeletonText {
+  height: 20px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+}
+
+.skeletonTextShort {
+  height: 16px;
+  width: 60%;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeletonFooter {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.skeletonDate {
+  height: 14px;
+  width: 100px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .addBtn {
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   background-size: 200% 200%;

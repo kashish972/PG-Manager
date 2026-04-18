@@ -1,6 +1,7 @@
 'use server';
 
 import { personRepository } from '@/repositories/person.repository';
+import { userRepository } from '@/repositories/user.repository';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
@@ -100,11 +101,14 @@ export async function createPerson(formData: FormData) {
     return { error: 'Unauthorized' };
   }
 
+  const email = formData.get('email') as string;
+  const name = formData.get('name') as string;
+
   const person = {
-    name: formData.get('name') as string,
+    name,
     aadharCard: formData.get('aadharCard') as string,
     phone: formData.get('phone') as string,
-    email: formData.get('email') as string,
+    email,
     address: formData.get('address') as string,
     blockId: formData.get('blockId') as string,
     roomNumber: formData.get('roomNumber') as string,
@@ -114,6 +118,17 @@ export async function createPerson(formData: FormData) {
   };
 
   await personRepository.create(session.user.tenantId, person);
+
+  const existingUser = await userRepository.findByEmail(email, session.user.tenantId);
+  if (!existingUser) {
+    const defaultPassword = `${name.toLowerCase().replace(/\s+/g, '')}123`;
+    await userRepository.createTenantUser(session.user.tenantId, {
+      email,
+      name,
+      password: defaultPassword,
+      role: 'member',
+    });
+  }
 
   revalidatePath('/persons');
   return { success: true };

@@ -1,5 +1,6 @@
 .container {
   padding: 0;
+  perspective: 1000px;
 }
 
 .header {
@@ -35,6 +36,42 @@
   100% { background-position: -200% 0; }
 }
 
+.skeletonTitle {
+  height: 32px;
+  width: 200px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+}
+
+.skeletonSubtitle {
+  height: 20px;
+  width: 300px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeletonChart {
+  height: 400px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-lg);
+  margin-bottom: 24px;
+}
+
+.skeletonCard {
+  height: 300px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-lg);
+}
+
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -56,20 +93,27 @@
 
 .statCard {
   background: var(--surface);
-  padding: 20px;
-  border-radius: 16px;
+  padding: 24px;
+  border-radius: 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
-  border: 1px solid transparent;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid var(--border);
+  transform-style: preserve-3d;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .statCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  transform: translateY(-8px) rotateX(2deg) rotateY(-2deg) scale(1.02);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 12px 24px -8px rgba(0, 0, 0, 0.15);
 }
 
 .statCard::before {
@@ -79,15 +123,55 @@
   left: 0;
   right: 0;
   height: 4px;
+  transition: height 0.3s ease;
 }
 
-.occupancyCard::before { background: linear-gradient(90deg, #e94560, #ff6b8a); }
-.availableCard::before { background: linear-gradient(90deg, #00d9a5, #00ffcc); }
-.revenueCard::before { background: linear-gradient(90deg, #ffc947, #ffdd57); }
-.annualCard::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+.statCard:hover::before {
+  height: 6px;
+}
+
+.statCard::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.statCard:hover::after {
+  opacity: 1;
+}
+
+.occupancyCard::before { 
+  background: linear-gradient(90deg, #e94560, #ff6b8a); 
+  box-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
+}
+.availableCard::before { 
+  background: linear-gradient(90deg, #00d9a5, #00ffcc); 
+  box-shadow: 0 0 20px rgba(0, 217, 165, 0.5);
+}
+.revenueCard::before { 
+  background: linear-gradient(90deg, #ffc947, #ffdd57); 
+  box-shadow: 0 0 20px rgba(255, 201, 71, 0.5);
+}
+.annualCard::before { 
+  background: linear-gradient(90deg, #6366f1, #8b5cf6); 
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
 
 .statIcon {
-  font-size: 1.8rem;
+  font-size: 2rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  transition: transform 0.4s ease;
+}
+
+.statCard:hover .statIcon {
+  transform: scale(1.15) rotate(-5deg);
 }
 
 .statContent {
@@ -373,8 +457,21 @@
 
 .card {
   background: var(--surface);
-  border-radius: 16px;
+  border-radius: 20px;
   padding: 24px;
+  border: 1px solid var(--border);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.card:hover {
+  transform: translateY(-4px) rotateX(1deg);
+  box-shadow: 
+    0 20px 40px -10px rgba(0, 0, 0, 0.15),
+    0 10px 20px -5px rgba(0, 0, 0, 0.1);
 }
 
 .cardHeader {
@@ -401,6 +498,15 @@
   background: var(--surface-hover);
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.analyticsItem:hover {
+  transform: translateX(8px);
+  background: var(--surface-active);
+  border-color: var(--accent);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .analyticsInfo {
@@ -413,6 +519,11 @@
 
 .analyticsIcon {
   font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.analyticsItem:hover .analyticsIcon {
+  transform: scale(1.1);
 }
 
 .analyticsValue {
@@ -492,4 +603,50 @@
   .title {
     font-size: 1.5rem;
   }
+}
+
+@keyframes float3d {
+  0%, 100% { 
+    transform: translateY(0) rotateX(0); 
+  }
+  50% { 
+    transform: translateY(-10px) rotateX(2deg); 
+  }
+}
+
+@keyframes pulse3d {
+  0%, 100% { 
+    transform: scale(1) perspective(500px) rotateY(0); 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  50% { 
+    transform: scale(1.02) perspective(500px) rotateY(2deg); 
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@keyframes shimmer3d {
+  0% { 
+    background-position: -200% 0;
+    transform: translateX(0) perspective(500px);
+  }
+  100% { 
+    background-position: 200% 0;
+    transform: translateX(5px) perspective(500px) rotateY(5deg);
+  }
+}
+
+.occupancyBar {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+  transition: all 0.4s ease;
+  transform-style: preserve-3d;
+}
+
+.occupancyBar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }

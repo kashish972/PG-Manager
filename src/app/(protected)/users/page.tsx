@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getUsers, createUser, deleteUser } from '@/actions/user.actions';
+import { SkeletonTable } from '@/components/ui/Skeleton';
 import styles from './page.module.css';
 
 export default function UsersPage() {
@@ -69,7 +70,12 @@ export default function UsersPage() {
   if (loading || session?.user?.role === 'member') {
     return (
       <MainLayout>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.skeletonTitle}></div>
+          </div>
+          <SkeletonTable rows={6} />
+        </div>
       </MainLayout>
     );
   }
