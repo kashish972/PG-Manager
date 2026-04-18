@@ -51,6 +51,58 @@
   font-size: 1rem;
 }
 
+.heroActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reminderBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--success);
+  border: none;
+  color: white;
+  padding: 10px 16px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 217, 165, 0.3);
+}
+
+.reminderBtn:hover:not(:disabled) {
+  background: #00c495;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 217, 165, 0.4);
+}
+
+.reminderBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.actionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .loading {
   padding: 60px 20px;
 }

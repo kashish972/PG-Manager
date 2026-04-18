@@ -7,8 +7,11 @@ import { useEffect, useState } from 'react';
 import { getPersonByEmail } from '@/actions/person.actions';
 import { getPaymentsByPerson } from '@/actions/payment.actions';
 import { changePassword } from '@/actions/user.actions';
+import { subscribeToPush } from '@/actions/push.actions';
+import { requestPushPermission, getPushPermissionStatus, urlBase64ToUint8Array } from '@/lib/push-notification.service';
 import { Modal } from '@/components/ui/Modal';
-import { Lock, Eye, EyeOff, AlertCircle, Check } from 'lucide-react';
+import { NotificationBell } from '@/components/ui/NotificationBell';
+import { Lock, Eye, EyeOff, AlertCircle, Check, Bell, BellOff } from 'lucide-react';
 import styles from './page.module.css';
 
 function getMonthNumber(monthStr: string): number {
@@ -66,6 +69,8 @@ export default function MyDetailsPage() {
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushSubscribing, setPushSubscribing] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -89,6 +94,43 @@ export default function MyDetailsPage() {
       router.push('/dashboard');
     }
   }, [session, router]);
+
+  useEffect(() => {
+    if (session?.user?.email && session?.user?.role === 'member') {
+      setPushEnabled(getPushPermissionStatus() === 'granted');
+    }
+  }, [session]);
+
+  const handlePushSubscribe = async () => {
+    const result = await requestPushPermission();
+    if (!result.granted) {
+      alert(result.error || 'Push permission denied');
+      return;
+    }
+
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      alert('Push notifications not supported');
+      return;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const sub = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_KEY || ''),
+      });
+
+      await subscribeToPush({
+        subscription: sub,
+        endpoint: sub.endpoint,
+      });
+
+      setPushEnabled(true);
+      alert('Push notifications enabled!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to subscribe');
+    }
+  };
 
   if (loading || status === 'loading') {
     return (
@@ -177,10 +219,21 @@ export default function MyDetailsPage() {
       <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.title}>My Details</h1>
-          <button className={styles.changePasswordBtn} onClick={() => setShowPasswordModal(true)}>
-            <Lock size={18} />
-            Change Password
-          </button>
+          <div className={styles.headerActions}>
+            <button 
+              className={`${styles.pushBtn} ${pushEnabled ? styles.pushEnabled : ''}`}
+              onClick={handlePushSubscribe}
+              title={pushEnabled ? 'Push notifications enabled' : 'Enable push notifications'}
+            >
+              {pushEnabled ? <Bell size={18} /> : <BellOff size={18} />}
+              {pushEnabled ? 'Push On' : 'Enable Push'}
+            </button>
+            <button className={styles.changePasswordBtn} onClick={() => setShowPasswordModal(true)}>
+              <Lock size={18} />
+              Change Password
+            </button>
+            <NotificationBell />
+          </div>
         </div>
 
         <div className={styles.overviewCard}>

@@ -7,15 +7,23 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { useEffect, useState } from 'react';
 import { getBlocks } from '@/actions/block.actions';
+import { sendNotificationToPerson } from '@/actions/notification.actions';
+import { createNotification } from '@/actions/in-app-notification.actions';
 import { SkeletonTable } from '@/components/ui/Skeleton';
+import { MessageSquare, Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
+import { NotificationModal } from '@/components/ui/NotificationModal';
 import styles from './page.module.css';
 
 export default function PersonsPage() {
   const { data: persons, isLoading, refetch } = usePersons();
   const { data: session } = useSession();
   const deletePerson = useDeletePerson();
+  const { showSuccess, showError, showInfo } = useToast();
   const [blocks, setBlocks] = useState<any[]>([]);
   const [blockMap, setBlockMap] = useState<Record<string, string>>({});
+  const [sendingNotification, setSendingNotification] = useState<string | null>(null);
+  const [notificationPerson, setNotificationPerson] = useState<any>(null);
 
   useEffect(() => {
     getBlocks().then(data => {
@@ -34,6 +42,58 @@ export default function PersonsPage() {
     if (confirm('Are you sure you want to delete this person?')) {
       await deletePerson.mutateAsync(id);
       refetch();
+    }
+  }
+
+  function handleSendNotification(person: any) {
+    if (!person.phone) {
+      showError('This person does not have a phone number');
+      return;
+    }
+    setNotificationPerson({
+      ...person,
+      blockName: blockMap[person.blockId] || '',
+    });
+  }
+
+  async function onSendNotification(personId: string, message: string, method: 'whatsapp' | 'sms' | 'push') {
+    const person = notificationPerson;
+    setSendingNotification(personId);
+    
+    let sendResult: { success: boolean; error: string } = { success: false, error: '' };
+    
+    if (method === 'push') {
+      // For push, just show local notification - to user's own browser
+      const { showPushNotification } = await import('@/lib/push-notification.service');
+      await showPushNotification({ title: 'PG Manager', body: message });
+      sendResult = { success: true, error: '' };
+    } else {
+      const result = await sendNotificationToPerson(personId, message, method);
+      sendResult = result as typeof sendResult;
+    }
+
+    // Save notification to database for in-app viewing
+    if (sendResult.success && person?.email) {
+      try {
+        await createNotification(
+          person.email,
+          'Notification',
+          message,
+          method
+        );
+      } catch (e) {
+        console.error('Failed to save notification:', e);
+      }
+    }
+
+    setSendingNotification(null);
+
+    if (!sendResult.success) {
+      showError(sendResult.error || 'Failed to send');
+      return { success: false, error: sendResult.error };
+    } else {
+      showSuccess(`Notification sent via ${method === 'whatsapp' ? 'WhatsApp' : method === 'sms' ? 'SMS' : 'Push'}!`);
+      return { success: true };
     }
   }
 
@@ -107,6 +167,18 @@ export default function PersonsPage() {
                     {canEdit && (
                       <td>
                         <div className={styles.actions}>
+                          <button
+                            onClick={() => handleSendNotification(person)}
+                            disabled={sendingNotification === person._id}
+                            className={styles.notificationBtn}
+                            title="Send WhatsApp Notification"
+                          >
+                            {sendingNotification === person._id ? (
+                              <Loader2 size={16} className={styles.spinner} />
+                            ) : (
+                              <MessageSquare size={16} />
+                            )}
+                          </button>
                           <Link href={`/persons/${person._id}`}>
                             <Button variant="ghost" size="sm">Edit</Button>
                           </Link>
@@ -126,6 +198,15 @@ export default function PersonsPage() {
               </tbody>
             </table>
           </div>
+        )}
+
+        {notificationPerson && (
+          <NotificationModal
+            isOpen={!!notificationPerson}
+            onClose={() => setNotificationPerson(null)}
+            person={notificationPerson}
+            onSend={onSendNotification}
+          />
         )}
       </div>
     </MainLayout>

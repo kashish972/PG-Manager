@@ -21,6 +21,44 @@
   margin: 0;
 }
 
+.headerActions {
+  display: flex;
+  gap: 12px;
+}
+
+.pushBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.pushBtn:hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.pushEnabled {
+  background: var(--success-glow);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.pushEnabled:hover {
+  background: var(--success-glow);
+  color: var(--success);
+}
+
 .changePasswordBtn {
   display: flex;
   align-items: center;

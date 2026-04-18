@@ -28,6 +28,7 @@ export const config = {
     '/payments/:path*', 
     '/users/:path*', 
     '/my-details',
+    '/notifications',
     '/notices/:path*',
     '/maintenance/:path*',
     '/rooms/:path*',

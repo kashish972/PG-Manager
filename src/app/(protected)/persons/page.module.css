@@ -192,3 +192,42 @@
   font-size: 0.75rem;
   margin-right: 8px;
 }
+
+.notificationBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--success);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.notificationBtn:hover:not(:disabled) {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+  transform: scale(1.05);
+}
+
+.notificationBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

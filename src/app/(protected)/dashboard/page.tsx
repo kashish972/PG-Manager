@@ -9,16 +9,20 @@ import { SkeletonStats } from '@/components/ui/Skeleton';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { User, IndianRupee, Wrench, Briefcase, Users, Check, Clock, Home, TrendingUp, DollarSign, Settings as SettingsIcon, Sparkles } from 'lucide-react';
+import { sendBulkRentReminders } from '@/actions/notification.actions';
+import { User, IndianRupee, Wrench, Briefcase, Users, Check, Clock, Home, TrendingUp, DollarSign, Settings as SettingsIcon, Sparkles, Bell, Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui/Toast';
 import styles from './page.module.css';
 
 export default function DashboardPage() {
   const { data: session } = useSession();
   const router = useRouter();
-  const { data: stats, isLoading } = useDashboardStats();
+  const { data: stats, isLoading, refetch } = useDashboardStats();
   const { prefs, isLoaded, updatePref, resetToDefaults, toggleAll } = useDashboardPrefs();
+  const { showSuccess, showError } = useToast();
   const [showSettings, setShowSettings] = useState(false);
   const [detailModal, setDetailModal] = useState<'total-residents' | 'active-residents' | 'pending-payments' | 'monthly-revenue' | 'occupied-rooms' | 'occupancy-rate' | 'pending-amount' | null>(null);
+  const [sendingReminders, setSendingReminders] = useState(false);
 
   useEffect(() => {
     if (session?.user?.role === 'member') {
@@ -77,6 +81,18 @@ export default function DashboardPage() {
     { icon: Briefcase, label: 'Add Staff', href: '/staff/add', color: '#6366f1' },
   ];
 
+  const handleSendReminders = async () => {
+    setSendingReminders(true);
+    const result = await sendBulkRentReminders();
+    setSendingReminders(false);
+    
+    if (result?.error) {
+      showError(`Error: ${result.error}`);
+    } else if (result?.summary) {
+      showSuccess(`Reminders sent! Sent: ${result.summary.sent}, Failed: ${result.summary.failed}, Skipped: ${result.summary.skipped}`);
+    }
+  };
+
   return (
     <MainLayout>
       <div className={styles.container}>
@@ -86,14 +102,27 @@ export default function DashboardPage() {
             <p className={styles.date}>{formatDate()}</p>
           </div>
           {session?.user?.role !== 'member' && (
-            <button 
-              className={styles.settingsBtn}
-              onClick={() => setShowSettings(true)}
-              title="Customize Dashboard"
-            >
-              <span className={styles.settingsIcon}><SettingsIcon size={18} /></span>
-              <span>Customize</span>
-            </button>
+            <div className={styles.heroActions}>
+              <button 
+                className={styles.reminderBtn}
+                onClick={handleSendReminders}
+                disabled={sendingReminders}
+                title="Send Rent Reminders"
+              >
+                <span className={styles.actionIcon}>
+                  {sendingReminders ? <Loader2 size={18} className={styles.spinner} /> : <Bell size={18} />}
+                </span>
+                <span>{sendingReminders ? 'Sending...' : 'Send Reminders'}</span>
+              </button>
+              <button 
+                className={styles.settingsBtn}
+                onClick={() => setShowSettings(true)}
+                title="Customize Dashboard"
+              >
+                <span className={styles.settingsIcon}><SettingsIcon size={18} /></span>
+                <span>Customize</span>
+              </button>
+            </div>
           )}
         </div>
         
