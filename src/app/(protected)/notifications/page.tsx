@@ -28,7 +28,14 @@ export default function NotificationsPage() {
   const loadNotifications = async () => {
     try {
       const data = await getNotifications(100);
-      setNotifications(data as Notification[]);
+      setNotifications(data.map((n: any) => ({
+        _id: n._id?.toString() || '',
+        title: n.title,
+        message: n.message,
+        type: n.type,
+        isRead: n.isRead,
+        createdAt: n.createdAt?.toString() || '',
+      })));
     } catch (error) {
       console.error('Failed to load notifications:', error);
     } finally {

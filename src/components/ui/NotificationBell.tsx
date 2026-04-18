@@ -50,7 +50,14 @@ export function NotificationBell() {
         getNotifications(20),
         getUnreadCount(),
       ]);
-      setNotifications(notifs as Notification[]);
+      setNotifications(notifs.map((n: any) => ({
+        _id: n._id?.toString() || '',
+        title: n.title,
+        message: n.message,
+        type: n.type,
+        isRead: n.isRead,
+        createdAt: n.createdAt?.toString() || '',
+      })));
       setUnreadCount(count as number);
     } catch (error) {
       console.error('Failed to load notifications:', error);

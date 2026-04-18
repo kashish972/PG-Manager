@@ -101,8 +101,8 @@ async function clientShowPushNotification(
         TTL: 86400,
         vapidDetails: {
           subject: 'mailto:admin@pgmanager.com',
-          publicKey: process.env.NEXT_PUBLIC_VAPID_KEY,
-          privateKey: process.env.VAPID_PRIVATE_KEY,
+          publicKey: process.env.NEXT_PUBLIC_VAPID_KEY || '',
+          privateKey: process.env.VAPID_PRIVATE_KEY || '',
         },
       }
     );
