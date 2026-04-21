@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getNotices, deleteNotice } from '@/actions/notice.actions';
+import { Skeleton } from '@/components/ui/Skeleton';
 import styles from './page.module.css';
 
 export default function NoticesPage() {
@@ -48,7 +49,25 @@ export default function NoticesPage() {
   if (loading) {
     return (
       <MainLayout>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.skeletonTitle}></div>
+          </div>
+          <div className={styles.grid}>
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className={styles.skeletonCard}>
+                <div className={styles.skeletonBadge}></div>
+                <div className={styles.skeletonContent}>
+                  <div className={styles.skeletonText}></div>
+                  <div className={styles.skeletonTextShort}></div>
+                </div>
+                <div className={styles.skeletonFooter}>
+                  <div className={styles.skeletonDate}></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </MainLayout>
     );
   }
@@ -71,8 +90,12 @@ export default function NoticesPage() {
           </div>
         ) : (
           <div className={styles.grid}>
-            {notices.map((notice: any) => (
-              <div key={notice._id} className={styles.card}>
+            {notices.map((notice: any, index: number) => (
+              <div 
+                key={notice._id} 
+                className={styles.card}
+                style={{ '--index': index } as React.CSSProperties}
+              >
                 <div className={styles.cardHeader}>
                   <span className={`${styles.priority} ${getPriorityColor(notice.priority)}`}>
                     {notice.priority}

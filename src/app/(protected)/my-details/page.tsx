@@ -6,6 +6,12 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getPersonByEmail } from '@/actions/person.actions';
 import { getPaymentsByPerson } from '@/actions/payment.actions';
+import { changePassword } from '@/actions/user.actions';
+import { subscribeToPush } from '@/actions/push.actions';
+import { requestPushPermission, getPushPermissionStatus, urlBase64ToUint8Array } from '@/lib/push-notification.service';
+import { Modal } from '@/components/ui/Modal';
+import { NotificationBell } from '@/components/ui/NotificationBell';
+import { Lock, Eye, EyeOff, AlertCircle, Check, Bell, BellOff } from 'lucide-react';
 import styles from './page.module.css';
 
 function getMonthNumber(monthStr: string): number {
@@ -54,6 +60,17 @@ export default function MyDetailsPage() {
   const [person, setPerson] = useState<any>(null);
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushSubscribing, setPushSubscribing] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -77,6 +94,43 @@ export default function MyDetailsPage() {
       router.push('/dashboard');
     }
   }, [session, router]);
+
+  useEffect(() => {
+    if (session?.user?.email && session?.user?.role === 'member') {
+      setPushEnabled(getPushPermissionStatus() === 'granted');
+    }
+  }, [session]);
+
+  const handlePushSubscribe = async () => {
+    const result = await requestPushPermission();
+    if (!result.granted) {
+      alert(result.error || 'Push permission denied');
+      return;
+    }
+
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+      alert('Push notifications not supported');
+      return;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const sub = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_KEY || ''),
+      });
+
+      await subscribeToPush({
+        subscription: sub,
+        endpoint: sub.endpoint,
+      });
+
+      setPushEnabled(true);
+      alert('Push notifications enabled!');
+    } catch (error: any) {
+      alert(error.message || 'Failed to subscribe');
+    }
+  };
 
   if (loading || status === 'loading') {
     return (
@@ -117,10 +171,70 @@ export default function MyDetailsPage() {
   
   const totalPendingAmount = pendingCount * (person.monthlyRent || 0);
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError('');
+    setPasswordSuccess('');
+
+    if (!currentPassword) {
+      setPasswordError('Please enter your current password');
+      return;
+    }
+
+    if (!newPassword) {
+      setPasswordError('Please enter a new password');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError('New password must be at least 6 characters');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Passwords do not match');
+      return;
+    }
+
+    setIsChangingPassword(true);
+    const result = await changePassword(currentPassword, newPassword);
+    setIsChangingPassword(false);
+
+    if (result?.error) {
+      setPasswordError(result.error);
+    } else {
+      setPasswordSuccess('Password changed successfully!');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setTimeout(() => {
+        setShowPasswordModal(false);
+        setPasswordSuccess('');
+      }, 2000);
+    }
+  };
+
   return (
     <MainLayout>
       <div className={styles.container}>
-        <h1 className={styles.title}>My Details</h1>
+        <div className={styles.header}>
+          <h1 className={styles.title}>My Details</h1>
+          <div className={styles.headerActions}>
+            <button 
+              className={`${styles.pushBtn} ${pushEnabled ? styles.pushEnabled : ''}`}
+              onClick={handlePushSubscribe}
+              title={pushEnabled ? 'Push notifications enabled' : 'Enable push notifications'}
+            >
+              {pushEnabled ? <Bell size={18} /> : <BellOff size={18} />}
+              {pushEnabled ? 'Push On' : 'Enable Push'}
+            </button>
+            <button className={styles.changePasswordBtn} onClick={() => setShowPasswordModal(true)}>
+              <Lock size={18} />
+              Change Password
+            </button>
+            <NotificationBell />
+          </div>
+        </div>
 
         <div className={styles.overviewCard}>
           <div className={styles.overviewItem}>
@@ -220,6 +334,67 @@ export default function MyDetailsPage() {
             <p className={styles.noPayments}>No payment history available</p>
           )}
         </div>
+
+        <Modal isOpen={showPasswordModal} onClose={() => { setShowPasswordModal(false); setPasswordError(''); setPasswordSuccess(''); }} title="Change Password" size="sm">
+          <form onSubmit={handleChangePassword} className={styles.passwordForm}>
+            {passwordError && (
+              <div className={styles.passwordError}>
+                <AlertCircle size={16} />
+                {passwordError}
+              </div>
+            )}
+            {passwordSuccess && (
+              <div className={styles.passwordSuccess}>
+                <Check size={16} />
+                {passwordSuccess}
+              </div>
+            )}
+            
+            <div className={styles.formGroup}>
+              <label>Current Password</label>
+              <div className={styles.passwordInputWrapper}>
+                <input
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Enter current password"
+                />
+                <button type="button" onClick={() => setShowCurrentPassword(!showCurrentPassword)} className={styles.togglePassword}>
+                  {showCurrentPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>New Password</label>
+              <div className={styles.passwordInputWrapper}>
+                <input
+                  type={showNewPassword ? 'text' : 'password'}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                />
+                <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className={styles.togglePassword}>
+                  {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Confirm New Password</label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+              />
+            </div>
+
+            <button type="submit" disabled={isChangingPassword} className={styles.submitBtn}>
+              {isChangingPassword ? 'Changing...' : 'Change Password'}
+            </button>
+          </form>
+        </Modal>
       </div>
     </MainLayout>
   );

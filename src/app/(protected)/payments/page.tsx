@@ -4,11 +4,16 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { usePayments, useDeletePayment } from '@/hooks/use-data';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { getPersons } from '@/actions/person.actions';
+import { getBlocks } from '@/actions/block.actions';
+import { getCurrentPG } from '@/actions/pg.actions';
 import QRCode from 'react-qr-code';
 import { jsPDF } from 'jspdf';
+import { FileText } from 'lucide-react';
+import { SkeletonStats, SkeletonTable } from '@/components/ui/Skeleton';
+import { Pagination } from '@/components/ui/Pagination';
 import styles from './page.module.css';
 
 export default function PaymentsPage() {
@@ -17,9 +22,41 @@ export default function PaymentsPage() {
   const deletePayment = useDeletePayment();
   const [selectedPayment, setSelectedPayment] = useState<any>(null);
   const [persons, setPersons] = useState<any[]>([]);
+  const [blocks, setBlocks] = useState<any[]>([]);
   const [generating, setGenerating] = useState(false);
+  const [upiId, setUpiId] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredPayments = payments?.filter((payment: any) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    const person = persons.find((p: any) => p._id === payment.personId);
+    return (
+      payment.month?.toLowerCase().includes(query) ||
+      payment.amount?.toString().includes(query) ||
+      payment.status?.toLowerCase().includes(query) ||
+      person?.name?.toLowerCase().includes(query)
+    );
+  }) || [];
 
   const canEdit = session?.user?.role !== 'member';
+
+  useEffect(() => {
+    const maxPage = Math.ceil((payments?.length || 0) / itemsPerPage);
+    if (currentPage > maxPage && maxPage > 0) {
+      setCurrentPage(maxPage);
+    }
+  }, [payments?.length, itemsPerPage]);
+
+  useEffect(() => {
+    getPersons().then(setPersons).catch(() => {});
+    getBlocks().then(setBlocks).catch(() => {});
+    getCurrentPG().then(data => {
+      if (data) setUpiId(data.upiId || '');
+    }).catch(() => {});
+  }, []);
 
   async function handleDelete(id: string) {
     if (confirm('Are you sure you want to delete this payment?')) {
@@ -55,7 +92,11 @@ export default function PaymentsPage() {
 
   const getPersonRoom = (personId: string) => {
     const person = persons.find(p => p._id === personId);
-    return person?.roomNumber || '';
+    if (!person) return '';
+    const block = blocks.find(b => String(b._id) === String(person.blockId));
+    const blockName = block?.name || '';
+    const roomNum = person.roomNumber || '';
+    return blockName ? `${blockName} - Room ${roomNum}` : roomNum ? `Room ${roomNum}` : '';
   };
 
   const generateReceipt = () => {
@@ -94,14 +135,20 @@ export default function PaymentsPage() {
   };
 
   const generateUPIQR = () => {
-    if (!selectedPayment) return '';
-    return `upi://pay?pa=owner@upi&pn=PG+Manager&am=${selectedPayment.amount}&tn=Rent+${selectedPayment.month}`;
+    if (!selectedPayment || !upiId) return '';
+    return `upi://pay?pa=${upiId}&pn=PG+Manager&am=${selectedPayment.amount}&tn=Rent+${selectedPayment.month}`;
   };
 
   if (isLoading) {
     return (
       <MainLayout>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.skeletonTitle}></div>
+          </div>
+          <SkeletonStats />
+          <SkeletonTable rows={8} />
+        </div>
       </MainLayout>
     );
   }
@@ -127,7 +174,24 @@ export default function PaymentsPage() {
           )}
         </div>
 
-        {payments?.length === 0 ? (
+        <div className={styles.searchWrapper}>
+          <input
+            type="text"
+            placeholder="Search by month, amount, status, name..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className={styles.searchInput}
+          />
+        </div>
+
+        {filteredPayments.length === 0 && searchQuery ? (
+          <div className={styles.empty}>
+            <p>No payments found for "{searchQuery}"</p>
+          </div>
+        ) : filteredPayments.length === 0 ? (
           <div className={styles.empty}>
             <p>No payments yet.</p>
           </div>
@@ -145,7 +209,9 @@ export default function PaymentsPage() {
                 </tr>
               </thead>
               <tbody>
-                {payments?.map((payment: any) => (
+                {filteredPayments
+                  ?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                  .map((payment: any) => (
                   <tr key={payment._id}>
                     <td>
                       <button 
@@ -166,7 +232,7 @@ export default function PaymentsPage() {
                     {canEdit && (
                       <td>
                         <div className={styles.actions}>
-                          <Link href={`/payments/add?personId=${payment.personId}`}>
+                          <Link href={`/payments/add?personId=${payment.personId}&paymentId=${payment._id}`}>
                             <Button variant="ghost" size="sm">Edit</Button>
                           </Link>
                           <Button
@@ -184,6 +250,19 @@ export default function PaymentsPage() {
                 ))}
               </tbody>
             </table>
+            <Pagination
+              currentPage={currentPage}
+              totalItems={filteredPayments.length || 0}
+              itemsPerPage={itemsPerPage}
+              onPageChange={(page) => {
+                setCurrentPage(page);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onPageSizeChange={(size) => {
+                setItemsPerPage(size);
+                setCurrentPage(1);
+              }}
+            />
           </div>
         )}
 
@@ -218,16 +297,8 @@ export default function PaymentsPage() {
 
               <div className={styles.modalActions}>
                 <button className={styles.receiptBtn} onClick={generateReceipt}>
-                  📄 Download Receipt
+                  <FileText className={styles.icon} size={16} /> Download Receipt
                 </button>
-              </div>
-
-              <div className={styles.qrSection}>
-                <h3>UPI Payment QR</h3>
-                <p className={styles.qrNote}>Scan to pay ₹{selectedPayment.amount?.toLocaleString()}</p>
-                <div className={styles.qrCode}>
-                  <QRCode value={generateUPIQR()} size={120} />
-                </div>
               </div>
             </div>
           </div>

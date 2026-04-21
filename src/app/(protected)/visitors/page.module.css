@@ -7,6 +7,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+  animation: fadeInUp 0.4s ease forwards;
 }
 
 @media (max-width: 768px) {
@@ -19,6 +20,7 @@
 
 .title {
   font-size: 2rem;
+  color: var(--text-primary);
 }
 
 @media (max-width: 768px) {
@@ -29,22 +31,58 @@
 
 .loading {
   text-align: center;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   padding: 60px 20px;
 }
 
+.skeletonTitle {
+  height: 36px;
+  width: 160px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+  margin-bottom: 32px;
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.skeletonItem {
+  height: 80px;
+  background: linear-gradient(90deg, var(--surface-hover) 25%, var(--border) 50%, var(--surface-hover) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-lg);
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 .addBtn {
-  background: #e94560;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: white;
   border: none;
   padding: 12px 24px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-weight: 600;
   cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 15px var(--accent-glow);
 }
 
 .addBtn:hover {
-  background: #d63850;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--accent-glow);
+}
+
+.addBtn:active {
+  transform: translateY(0);
 }
 
 .statsGrid {
@@ -61,21 +99,27 @@
 }
 
 .statCard {
-  background: #1f1f3a;
-  padding: 20px;
-  border-radius: 12px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
   text-align: center;
+  box-shadow: var(--shadow-md);
+  animation: fadeInUp 0.4s ease forwards;
+  animation-delay: 0.1s;
+}
+
+.statCard:nth-child(2) {
+  animation-delay: 0.2s;
 }
 
 .statValue {
   display: block;
   font-size: 2rem;
   font-weight: 700;
-  color: white;
+  color: var(--accent);
 }
 
 .statLabel {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
 }
 
@@ -85,7 +129,7 @@
 
 .sectionTitle {
   font-size: 1.25rem;
-  color: white;
+  color: var(--text-primary);
   margin-bottom: 16px;
 }
 
@@ -96,14 +140,22 @@
 }
 
 .card {
-  background: #1f1f3a;
-  border-radius: 12px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
   padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .cardInfo {
@@ -113,17 +165,17 @@
 }
 
 .visitorName {
-  color: white;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .personName {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
 }
 
 .purpose {
-  color: #6a6a7a;
+  color: var(--text-muted);
   font-size: 0.75rem;
 }
 
@@ -134,28 +186,34 @@
 }
 
 .time {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
 }
 
 .checkoutBtn {
-  background: #00d9a5;
-  color: #0f0f23;
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-hover) 100%);
+  color: #0a0a1a;
   border: none;
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-weight: 600;
   cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 2px 10px var(--success-glow);
 }
 
 .checkoutBtn:hover {
-  background: #00c896;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px var(--success-glow);
 }
 
 .tableWrapper {
-  background: #1f1f3a;
-  border-radius: 12px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
   overflow-x: auto;
+  box-shadow: var(--shadow-md);
+  animation: fadeInUp 0.4s ease forwards;
+  animation-delay: 0.3s;
 }
 
 .table {
@@ -170,33 +228,51 @@
 }
 
 .table th {
-  background: #16213e;
-  color: #a0a0b0;
+  background: var(--surface-elevated);
+  color: var(--text-secondary);
   font-weight: 500;
   font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .table tr {
-  border-bottom: 1px solid #2a2a4e;
+  border-bottom: 1px solid var(--border);
+  transition: background var(--transition-fast);
+}
+
+.table tbody tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.table tbody tr:hover {
+  background: var(--surface-hover);
 }
 
 .table tr:last-child {
   border-bottom: none;
 }
 
+.table td {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
 .deleteBtn {
   background: transparent;
-  color: #e94560;
-  border: 1px solid #e94560;
+  color: var(--accent);
+  border: 1px solid var(--accent);
   padding: 4px 10px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 0.75rem;
+  transition: all var(--transition-normal);
 }
 
 .deleteBtn:hover {
-  background: #e94560;
+  background: var(--accent);
   color: white;
+  box-shadow: 0 2px 10px var(--accent-glow);
 }
 
 .modalOverlay {
@@ -205,24 +281,29 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 20px;
+  animation: fadeIn 0.2s ease forwards;
+  backdrop-filter: blur(4px);
 }
 
 .modal {
-  background: #1f1f3a;
+  background: var(--surface);
   padding: 24px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   width: 100%;
   max-width: 450px;
+  box-shadow: var(--shadow-lg);
+  animation: scaleIn 0.3s ease forwards;
+  border: 1px solid var(--border);
 }
 
 .modal h2 {
-  color: white;
+  color: var(--text-primary);
   margin-bottom: 20px;
 }
 
@@ -232,7 +313,7 @@
 
 .field label {
   display: block;
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   margin-bottom: 8px;
 }
@@ -240,11 +321,31 @@
 .field input, .field select {
   width: 100%;
   padding: 12px;
-  background: #0f0f23;
-  border: 1px solid #2a2a4e;
-  border-radius: 8px;
-  color: white;
+  background: var(--background-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
   font-size: 1rem;
+  transition: all var(--transition-fast);
+}
+
+.field input:focus, .field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.field input::placeholder {
+  color: var(--text-muted);
+}
+
+.field select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a0a0b0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 }
 
 .modalActions {
@@ -256,20 +357,50 @@
 .cancelBtn {
   flex: 1;
   background: transparent;
-  color: #a0a0b0;
-  border: 1px solid #2a2a4e;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
   padding: 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
+  transition: all var(--transition-normal);
+  font-weight: 500;
+}
+
+.cancelBtn:hover {
+  background: var(--surface-elevated);
+  border-color: var(--border-light);
 }
 
 .submitBtn {
   flex: 1;
-  background: #e94560;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
   color: white;
   border: none;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   font-weight: 600;
   cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+.submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--accent-glow);
+}
+
+@media (max-width: 640px) {
+  .card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cardMeta {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .table th, .table td {
+    padding: 10px 12px;
+  }
 }

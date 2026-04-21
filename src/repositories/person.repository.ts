@@ -12,6 +12,7 @@ export class PersonRepository {
       phone: input.phone,
       email: input.email,
       address: input.address,
+      blockId: input.blockId,
       roomNumber: input.roomNumber,
       moveInDate: input.moveInDate,
       monthlyRent: input.monthlyRent,

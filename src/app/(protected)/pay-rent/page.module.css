@@ -1,0 +1,239 @@
+.container {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.pendingBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(233, 69, 96, 0.15);
+  color: var(--accent);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 1px solid rgba(233, 69, 96, 0.3);
+}
+
+.loading {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 60px;
+}
+
+.noUpi {
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 60px 20px;
+}
+
+.noUpi p {
+  color: var(--text-secondary);
+  margin: 8px 0;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+@media (max-width: 900px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.qrCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+}
+
+.qrHeader {
+  margin-bottom: 24px;
+}
+
+.qrHeader h2 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin: 0 0 8px 0;
+}
+
+.qrHeader p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.qrCode {
+  background: white;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  display: inline-block;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 24px;
+}
+
+.upiDetails {
+  background: var(--surface-elevated);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.upiLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.upiId {
+  font-family: monospace;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 600;
+}
+
+.instructions {
+  text-align: left;
+  background: var(--surface-hover);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.instructions h3 {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
+}
+
+.instructions ol {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.8;
+}
+
+.paymentsCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+}
+
+.paymentsCard h2 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0 0 20px 0;
+}
+
+.noPayments {
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 20px;
+}
+
+.paymentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.paymentItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+}
+
+.paymentItem.pending {
+  border-color: rgba(233, 69, 96, 0.3);
+  background: rgba(233, 69, 96, 0.05);
+}
+
+.paymentItem.overdue {
+  border-color: rgba(233, 69, 96, 0.5);
+  background: rgba(233, 69, 96, 0.1);
+}
+
+.paymentItem.paid {
+  border-color: rgba(0, 217, 165, 0.3);
+  background: rgba(0, 217, 165, 0.05);
+}
+
+.paymentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.paymentMonth {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.paymentAmount {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.paymentActions {
+  display: flex;
+  align-items: center;
+}
+
+.payBtn {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all var(--transition-fast);
+}
+
+.payBtn:hover {
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-1px);
+}
+
+.paidBadge {
+  background: rgba(0, 217, 165, 0.15);
+  color: var(--success);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+}

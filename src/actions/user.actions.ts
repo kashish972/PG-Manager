@@ -74,3 +74,24 @@ export async function getUsers() {
   if (!session?.user) return [];
   return userRepository.findAll(session.user.tenantId);
 }
+
+export async function changePassword(currentPassword: string, newPassword: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || !session?.user?.email) {
+    return { error: 'Unauthorized' };
+  }
+
+  const user = await userRepository.findByEmail(session.user.email, session.user.tenantId);
+  if (!user) {
+    return { error: 'User not found' };
+  }
+
+  const isValid = await userRepository.verifyPassword(user, currentPassword);
+  if (!isValid) {
+    return { error: 'Current password is incorrect' };
+  }
+
+  await userRepository.update(user._id.toString(), session.user.tenantId, { password: newPassword });
+  
+  return { success: true };
+}

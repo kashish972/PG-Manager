@@ -17,14 +17,23 @@ export interface IPerson {
   _id: ObjectId;
   name: string;
   aadharCard: string;
+  aadharCardImage?: string;
+  aadharCardPublicId?: string;
+  photo?: string;
+  photoPublicId?: string;
   phone: string;
   email?: string;
   address?: string;
+  blockId?: string;
   roomNumber: string;
   moveInDate: Date;
   monthlyRent: number;
   securityDeposit: number;
   isActive: boolean;
+  noticeRequestedAt?: Date;
+  noticeApprovedAt?: Date;
+  moveOutDate?: Date;
+  noticeReason?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,6 +41,15 @@ export interface IPerson {
 export interface IRoom {
   roomNumber: string;
   capacity: number;
+  isAC: boolean;
+}
+
+export interface IBlock {
+  _id: ObjectId;
+  name: string;
+  rooms: IRoom[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IPG {
@@ -44,6 +62,8 @@ export interface IPG {
   totalRooms: number;
   defaultCapacity: number;
   roomMappings?: { [key: string]: string };
+  upiId?: string;
+  noticePeriodDays?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -96,9 +116,14 @@ export interface CreateUserInput {
 export interface CreatePersonInput {
   name: string;
   aadharCard: string;
+  aadharCardImage?: string;
+  aadharCardPublicId?: string;
+  photo?: string;
+  photoPublicId?: string;
   phone: string;
   email?: string;
   address?: string;
+  blockId?: string;
   roomNumber: string;
   moveInDate: Date;
   monthlyRent: number;
@@ -249,6 +274,8 @@ export interface IStaff {
   joinDate: Date;
   salary: number;
   isActive: boolean;
+  photo?: string;
+  aadharCardImage?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -269,6 +296,8 @@ export interface CreateStaffInput {
   role: StaffRole;
   joinDate: Date;
   salary: number;
+  photo?: string;
+  aadharCardImage?: string;
 }
 
 export interface UpdateStaffInput extends Partial<CreateStaffInput> {

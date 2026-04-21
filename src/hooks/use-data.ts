@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPersons, getActivePersons, getPerson, createPerson, updatePerson, deletePerson } from '@/actions/person.actions';
 import { getPayments, getPaymentsByPerson, getPayment, createPayment, updatePayment, deletePayment, getPaymentStats } from '@/actions/payment.actions';
 import { getDashboardStats } from '@/actions/dashboard.actions';
+import { getBlocks } from '@/actions/block.actions';
 
 export function usePersons() {
   return useQuery({
@@ -42,8 +43,9 @@ export function useUpdatePerson() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, formData }: { id: string; formData: FormData }) => updatePerson(id, formData),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['persons'] });
+      queryClient.invalidateQueries({ queryKey: ['person', variables.id] });
     },
   });
 }
@@ -125,5 +127,12 @@ export function useDashboardStats() {
   return useQuery({
     queryKey: ['dashboard'],
     queryFn: getDashboardStats,
+  });
+}
+
+export function useBlocks() {
+  return useQuery({
+    queryKey: ['blocks'],
+    queryFn: getBlocks,
   });
 }

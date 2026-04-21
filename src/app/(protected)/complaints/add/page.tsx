@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createComplaint } from '@/actions/complaint.actions';
 import { getPersons } from '@/actions/person.actions';
+import { getBlocks } from '@/actions/block.actions';
 import styles from './page.module.css';
 
 export default function AddComplaintPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [persons, setPersons] = useState<any[]>([]);
+  const [blocks, setBlocks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -24,12 +26,24 @@ export default function AddComplaintPage() {
 
   useEffect(() => {
     if (session?.user) {
-      getPersons().then(data => {
-        setPersons(data?.filter((p: any) => p.isActive) || []);
+      Promise.all([
+        getPersons(),
+        getBlocks()
+      ]).then(([personsData, blocksData]) => {
+        setPersons(personsData?.filter((p: any) => p.isActive) || []);
+        setBlocks(blocksData || []);
         setLoading(false);
       }).catch(() => setLoading(false));
     }
   }, [session]);
+
+  const getPersonDisplay = (person: any) => {
+    if (!person) return '';
+    const block = blocks.find(b => String(b._id) === String(person.blockId));
+    const blockName = block?.name || '';
+    const roomNum = person.roomNumber || '';
+    return blockName ? `${person.name} (${blockName} - Room ${roomNum})` : roomNum ? `${person.name} (Room ${roomNum})` : person.name;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -73,7 +87,7 @@ export default function AddComplaintPage() {
                 <option value="">Choose a resident</option>
                 {persons.map((person: any) => (
                   <option key={person._id} value={person._id}>
-                    {person.name} - Room {person.roomNumber}
+                    {getPersonDisplay(person)}
                   </option>
                 ))}
               </select>

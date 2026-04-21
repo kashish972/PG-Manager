@@ -6,12 +6,14 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createMaintenanceRequest } from '@/actions/maintenance.actions';
 import { getPersons } from '@/actions/person.actions';
+import { getBlocks } from '@/actions/block.actions';
 import styles from './page.module.css';
 
 export default function AddMaintenancePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [persons, setPersons] = useState<any[]>([]);
+  const [blocks, setBlocks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -26,12 +28,24 @@ export default function AddMaintenancePage() {
 
   useEffect(() => {
     if (session?.user) {
-      getPersons().then(data => {
-        setPersons(data?.filter((p: any) => p.isActive) || []);
+      Promise.all([
+        getPersons(),
+        getBlocks()
+      ]).then(([personsData, blocksData]) => {
+        setPersons(personsData?.filter((p: any) => p.isActive) || []);
+        setBlocks(blocksData || []);
         setLoading(false);
       }).catch(() => setLoading(false));
     }
   }, [session]);
+
+  const getPersonDisplay = (person: any) => {
+    if (!person) return '';
+    const block = blocks.find(b => String(b._id) === String(person.blockId));
+    const blockName = block?.name || '';
+    const roomNum = person.roomNumber || '';
+    return blockName ? `${person.name} (${blockName} - Room ${roomNum})` : roomNum ? `${person.name} (Room ${roomNum})` : person.name;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -66,17 +80,17 @@ export default function AddMaintenancePage() {
         <h1 className={styles.title}>New Maintenance Request</h1>
 
         <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.field}>
-            <label className={styles.label}>Select Resident</label>
-            <select name="personId" className={styles.select} required>
-              <option value="">Choose a resident</option>
-              {persons.map((person: any) => (
-                <option key={person._id} value={person._id}>
-                  {person.name} - Room {person.roomNumber}
-                </option>
-              ))}
-            </select>
-          </div>
+<div className={styles.field}>
+              <label className={styles.label}>Select Resident</label>
+              <select name="personId" className={styles.select} required>
+                <option value="">Choose a resident</option>
+                {persons.map((person: any) => (
+                  <option key={person._id} value={person._id}>
+                    {getPersonDisplay(person)}
+                  </option>
+                ))}
+              </select>
+            </div>
 
           <div className={styles.field}>
             <label className={styles.label}>Issue Title</label>

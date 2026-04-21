@@ -5,16 +5,19 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getStaff, getStaffStats, deleteStaff } from '@/actions/staff.actions';
+import { User, Wrench, ChefHat, Shield, Sparkles, ClipboardList, Trash2 } from 'lucide-react';
+import { SkeletonStats } from '@/components/ui/Skeleton';
+import { Pagination } from '@/components/ui/Pagination';
 import styles from './page.module.css';
 
-const ROLE_ICONS: Record<string, string> = {
-  caretaker: '🧑‍💼',
-  cook: '👨‍🍳',
-  security: '👮',
-  cleaner: '🧹',
-  manager: '📋',
-  maintenance: '🔧',
-  other: '👤',
+const ROLE_ICONS: Record<string, any> = {
+  caretaker: User,
+  cook: ChefHat,
+  security: Shield,
+  cleaner: Sparkles,
+  manager: ClipboardList,
+  maintenance: Wrench,
+  other: User,
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -34,6 +37,21 @@ export default function StaffPage() {
   const [stats, setStats] = useState({ total: 0, active: 0, monthlySalary: 0, pendingSalary: 0 });
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  const filteredStaff = staff?.filter((s: any) => {
+    const matchesFilter = filter === 'all' || s.role === filter;
+    if (!matchesFilter) return false;
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      s.name?.toLowerCase().includes(query) ||
+      s.phone?.includes(query) ||
+      s.role?.toLowerCase().includes(query)
+    );
+  }) || [];
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -65,16 +83,25 @@ export default function StaffPage() {
     setStats(updatedStats);
   };
 
-  const filteredStaff = filter === 'all' 
-    ? staff 
-    : filter === 'active' 
-      ? staff.filter(s => s.isActive)
-      : staff.filter(s => !s.isActive);
-
   if (loading || session?.user?.role === 'member') {
     return (
       <MainLayout>
-        <div className={styles.loading}>Loading...</div>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.skeletonTitle}></div>
+          </div>
+          <SkeletonStats />
+          <div className={styles.filters}>
+            <div className={styles.skeletonFilter}></div>
+            <div className={styles.skeletonFilter}></div>
+            <div className={styles.skeletonFilter}></div>
+          </div>
+          <div className={styles.grid}>
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className={styles.skeletonCard}></div>
+            ))}
+          </div>
+        </div>
       </MainLayout>
     );
   }
@@ -125,28 +152,58 @@ export default function StaffPage() {
           </button>
         </div>
 
+        <div className={styles.searchWrapper}>
+          <input
+            type="text"
+            placeholder="Search by name, phone, role..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className={styles.searchInput}
+          />
+        </div>
+
         {filteredStaff.length === 0 ? (
           <div className={styles.empty}>
             <p>No staff members found.</p>
           </div>
         ) : (
           <div className={styles.grid}>
-            {filteredStaff.map((member: any) => (
+            {filteredStaff
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map((member: any) => {
+              const RoleIcon = ROLE_ICONS[member.role] || User;
+              return (
               <div 
                 key={member._id} 
                 className={`${styles.card} ${!member.isActive ? styles.inactive : ''}`}
               >
                 <div className={styles.cardHeader}>
                   <div className={styles.avatar}>
-                    {ROLE_ICONS[member.role] || '👤'}
+                    {member.photo ? (
+                      <img src={member.photo} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-lg)' }} />
+                    ) : (
+                      <RoleIcon size={32} />
+                    )}
                   </div>
                   <div className={styles.info}>
                     <h3>{member.name}</h3>
                     <span className={styles.role}>{ROLE_LABELS[member.role] || member.role}</span>
                   </div>
-                  <span className={`${styles.status} ${member.isActive ? styles.active : styles.inactive}`}>
-                    {member.isActive ? 'Active' : 'Inactive'}
-                  </span>
+                  <div className={styles.headerActions}>
+                    <span className={`${styles.status} ${member.isActive ? styles.active : styles.inactive}`}>
+                      {member.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                    <button 
+                      className={styles.deleteBtn}
+                      onClick={() => handleDelete(member._id)}
+                      title="Delete Staff"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
                 
                 <div className={styles.details}>
@@ -178,15 +235,9 @@ export default function StaffPage() {
                     Pay Salary
                   </button>
                 </div>
-
-                <button 
-                  className={styles.deleteBtn}
-                  onClick={() => handleDelete(member._id)}
-                >
-                  Delete
-                </button>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

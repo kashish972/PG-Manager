@@ -1,0 +1,941 @@
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.statBox {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.statNumber {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-outfit);
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.paymentStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.revenueSummary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.revenueCard {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.revenueIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.revenueInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.revenueLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.revenueValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-outfit);
+}
+
+.revenueProgress {
+  margin-bottom: 24px;
+}
+
+.progressBar {
+  height: 10px;
+  background: var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #00d9a5, #00c495);
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+
+.progressLabel {
+  font-size: 0.85rem;
+  color: #00d9a5;
+  font-weight: 500;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
+}
+
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.summaryItem {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.summaryCount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-outfit);
+}
+
+.summaryLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.personList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.personCard {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  transition: all var(--transition-normal);
+}
+
+.personCard:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.personHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.personAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: white;
+}
+
+.personBasic {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.personName {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.personDetails {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.detailRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.detailRow svg {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.badge.active {
+  background: rgba(0, 217, 165, 0.15);
+  color: #00d9a5;
+}
+
+.badge.inactive {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+
+.badge.paid {
+  background: rgba(0, 217, 165, 0.15);
+  color: #00d9a5;
+}
+
+.badge.pending {
+  background: rgba(255, 201, 71, 0.15);
+  color: #ffc947;
+}
+
+.badge.overdue {
+  background: rgba(233, 69, 96, 0.15);
+  color: #e94560;
+}
+
+.paymentList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paymentItem {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all var(--transition-normal);
+}
+
+.paymentItem:hover {
+  border-color: var(--accent);
+}
+
+.paymentItemAlert {
+  border-left: 3px solid #e94560;
+}
+
+.paymentInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.paymentPerson {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.paymentMonth {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.paymentDate {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.paymentRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.paymentAmount {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-outfit);
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: var(--text-secondary);
+}
+
+.emptyIcon {
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.roomStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.roomStatBox {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.roomStatNumber {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-outfit);
+}
+
+.roomStatLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.roomList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.roomCard {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  transition: all var(--transition-normal);
+}
+
+.roomCard:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.roomHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.roomTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.roomTitle svg {
+  color: var(--accent);
+}
+
+.roomTags {
+  display: flex;
+  gap: 8px;
+}
+
+.roomTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.tagAC {
+  background: rgba(99, 102, 241, 0.15);
+  color: #6366f1;
+}
+
+.tagNonAC {
+  background: rgba(255, 201, 71, 0.15);
+  color: #ffc947;
+}
+
+.roomResidents {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.residentChip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.residentChipAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.residentChipInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.residentChipName {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.residentChipPhone {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.tagFull {
+  background: rgba(233, 69, 96, 0.15);
+  color: #e94560;
+}
+
+.tagPartial {
+  background: rgba(255, 201, 71, 0.15);
+  color: #ffc947;
+}
+
+.filterSection {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  flex-wrap: wrap;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filterLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.filterButtons {
+  display: flex;
+  gap: 6px;
+}
+
+.filterBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.filterBtn:hover {
+  background: var(--surface-active);
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.filterBtn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.clearFiltersBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: rgba(233, 69, 96, 0.1);
+  border: 1px solid rgba(233, 69, 96, 0.3);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #e94560;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  margin-left: auto;
+}
+
+.clearFiltersBtn:hover {
+  background: #e94560;
+  border-color: #e94560;
+  color: white;
+}
+
+.filterResultCount {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.occupancyOverview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.occupancyCircle {
+  position: relative;
+  width: 180px;
+  height: 180px;
+}
+
+.occupancySvg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.occupancyBg {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 8;
+}
+
+.occupancyProgress {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.5s ease;
+}
+
+.occupancyValue {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.occupancyPercent {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-outfit);
+}
+
+.occupancyLabel {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.occupancyStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.occupancyStatBox {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.occupancyStatIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.occupancyStatInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.occupancyStatValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-outfit);
+}
+
+.occupancyStatLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.occupancyBreakdown {
+  margin-bottom: 20px;
+}
+
+.occupancyBar {
+  height: 12px;
+  background: var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.occupancyBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, #00d9a5, #00c495);
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+.occupancyLegend {
+  display: flex;
+  gap: 24px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.occupancyInsight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(255, 201, 71, 0.1);
+  border: 1px solid rgba(255, 201, 71, 0.3);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: #ffc947;
+}
+
+.pendingOverview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.pendingMainCard {
+  background: linear-gradient(135deg, rgba(233, 69, 96, 0.1) 0%, rgba(233, 69, 96, 0.05) 100%);
+  border: 1px solid rgba(233, 69, 96, 0.2);
+  border-radius: var(--radius-xl);
+  padding: 32px 48px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.pendingIcon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #e94560, #c73659);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.pendingMainInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pendingAmount {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #e94560;
+  font-family: var(--font-outfit);
+}
+
+.pendingLabel {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.pendingBreakdown {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.pendingStatBox {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pendingStatValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  font-family: var(--font-outfit);
+}
+
+.pendingStatLabel {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.pendingSummary {
+  margin-bottom: 24px;
+}
+
+.pendingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pendingRow:last-child {
+  border-bottom: none;
+}
+
+.pendingRowLabel {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.pendingRowValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-outfit);
+}
+
+.pendingRowHighlight {
+  background: rgba(233, 69, 96, 0.1);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border-bottom: none;
+  margin: 8px -16px;
+}
+
+.pendingRowHighlight .pendingRowValue {
+  color: #e94560;
+}
+
+.pendingProgress {
+  margin-bottom: 20px;
+}
+
+.pendingProgressBar {
+  height: 10px;
+  background: var(--border);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.pendingProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #00d9a5, #00c495);
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+
+.pendingProgressLabel {
+  font-size: 0.85rem;
+  color: #00d9a5;
+  font-weight: 500;
+}
+
+.pendingInsight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(255, 201, 71, 0.1);
+  border: 1px solid rgba(255, 201, 71, 0.3);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: #ffc947;
+}
+
+@media (max-width: 640px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .paymentStats {
+    grid-template-columns: 1fr;
+  }
+  
+  .revenueSummary {
+    grid-template-columns: 1fr;
+  }
+  
+  .summaryGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .personDetails {
+    grid-template-columns: 1fr;
+  }
+  
+  .roomStats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .roomList {
+    grid-template-columns: 1fr;
+  }
+
+  .filterSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .clearFiltersBtn {
+    margin-left: 0;
+  }
+
+  .occupancyStats {
+    grid-template-columns: 1fr;
+  }
+
+  .occupancyCircle {
+    width: 140px;
+    height: 140px;
+  }
+
+  .occupancyPercent {
+    font-size: 2rem;
+  }
+
+  .pendingMainCard {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .pendingAmount {
+    font-size: 2rem;
+  }
+
+  .pendingBreakdown {
+    grid-template-columns: 1fr;
+  }
+}

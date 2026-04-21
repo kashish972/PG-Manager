@@ -1,15 +1,21 @@
 .layout {
   display: flex;
   min-height: 100vh;
-  background: #0f0f23;
+  background: var(--background);
+  position: relative;
 }
 
 .main {
   flex: 1;
-  margin-left: 260px;
-  padding: 32px;
+  margin-left: 280px;
+  width: calc(100% - 280px);
+  min-height: 100vh;
+}
+
+.content {
+  padding: 32px 40px;
   max-width: 1400px;
-  width: calc(100% - 260px);
+  animation: fadeIn 0.3s ease;
 }
 
 .mobileMenuBtn,
@@ -21,6 +27,9 @@
   .main {
     margin-left: 80px;
     width: calc(100% - 80px);
+  }
+  
+  .content {
     padding: 24px;
   }
 }
@@ -29,24 +38,39 @@
   .main {
     margin-left: 0;
     width: 100%;
-    padding: 16px;
-    padding-bottom: 80px;
-    padding-top: 60px;
+  }
+  
+  .content {
+    padding: 20px 16px;
+    padding-bottom: 100px;
+    padding-top: 70px;
   }
   
   .mobileMenuBtn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: fixed;
-    top: 12px;
-    left: 12px;
+    top: 16px;
+    left: 16px;
     z-index: 99;
-    background: #1a1a2e;
-    border: 1px solid #2a2a4e;
-    color: white;
-    font-size: 1.25rem;
-    padding: 10px 14px;
-    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 12px;
+    border-radius: var(--radius-md);
     cursor: pointer;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+  }
+  
+  .mobileMenuBtn:hover {
+    background: var(--surface-hover);
+    transform: scale(1.05);
+  }
+  
+  .mobileMenuBtn:active {
+    transform: scale(0.95);
   }
   
   .overlay {
@@ -56,7 +80,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
     z-index: 99;
+    animation: fadeIn 0.2s ease;
   }
 }

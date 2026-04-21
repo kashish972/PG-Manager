@@ -60,6 +60,8 @@ export async function getCurrentPG() {
     totalRooms: Number(pg.totalRooms) || 10,
     defaultCapacity: Number(pg.defaultCapacity) || 2,
     roomMappings: pg.roomMappings || {},
+    upiId: pg.upiId || '',
+    noticePeriodDays: Number(pg.noticePeriodDays) || 30,
   };
 }
 
@@ -113,5 +115,31 @@ export async function updateRoomNumber(oldNumber: string, newNumber: string) {
   } catch (error) {
     console.error('Update room error:', error);
     return { error: 'Failed to update room number' };
+  }
+}
+
+export async function updateUPISettings(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.tenantId || session.user.role !== 'owner') {
+    return { error: 'Only owner can update UPI settings' };
+  }
+
+  try {
+    const upiId = formData.get('upiId') as string;
+    const noticePeriodDays = Number(formData.get('noticePeriodDays')) || 30;
+    
+    const pg = await pgRepository.findBySlug(session.user.tenantId);
+    if (!pg) return { error: 'PG not found' };
+
+    await pgRepository.update(pg._id.toString(), { 
+      upiId,
+      noticePeriodDays 
+    } as any);
+    revalidatePath('/payments');
+    revalidatePath('/upi-settings');
+    return { success: true };
+  } catch (error) {
+    console.error('Update UPI error:', error);
+    return { error: 'Failed to update UPI settings' };
   }
 }

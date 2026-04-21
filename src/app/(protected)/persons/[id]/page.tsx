@@ -35,6 +35,7 @@ export default function EditPersonPage() {
     
     await updatePerson.mutateAsync({ id, formData });
     router.push('/persons');
+    router.refresh();
   }
 
   if (isLoading || !defaultValues) {
