@@ -2,6 +2,7 @@
 
 import { personRepository } from '@/repositories/person.repository';
 import { userRepository } from '@/repositories/user.repository';
+import { pgRepository } from '@/repositories/pg.repository';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
@@ -25,6 +26,10 @@ export async function getPersons() {
     isActive: p.isActive,
     photo: p.photo,
     aadharCardImage: p.aadharCardImage,
+    noticeRequestedAt: p.noticeRequestedAt,
+    noticeApprovedAt: p.noticeApprovedAt,
+    moveOutDate: p.moveOutDate,
+    noticeReason: p.noticeReason,
     createdAt: p.createdAt,
     updatedAt: p.updatedAt,
   }));
@@ -49,6 +54,10 @@ export async function getActivePersons() {
     isActive: p.isActive,
     photo: p.photo,
     aadharCardImage: p.aadharCardImage,
+    noticeRequestedAt: p.noticeRequestedAt,
+    noticeApprovedAt: p.noticeApprovedAt,
+    moveOutDate: p.moveOutDate,
+    noticeReason: p.noticeReason,
     createdAt: p.createdAt,
     updatedAt: p.updatedAt,
   }));
@@ -74,6 +83,10 @@ export async function getPerson(id: string) {
     isActive: p.isActive,
     photo: p.photo,
     aadharCardImage: p.aadharCardImage,
+    noticeRequestedAt: p.noticeRequestedAt,
+    noticeApprovedAt: p.noticeApprovedAt,
+    moveOutDate: p.moveOutDate,
+    noticeReason: p.noticeReason,
     createdAt: p.createdAt,
     updatedAt: p.updatedAt,
   };
@@ -198,4 +211,101 @@ export async function togglePersonStatus(id: string) {
 
   revalidatePath('/persons');
   return { success: true };
+}
+
+export async function requestMoveOutNotice(personId: string, reason: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return { error: 'Unauthorized' };
+  }
+
+  try {
+    const pg = await pgRepository.findBySlug(session.user.tenantId);
+    if (!pg) return { error: 'PG not found' };
+
+    const noticePeriodDays = Number(pg.noticePeriodDays) || 30;
+    const noticeRequestedAt = new Date();
+    const moveOutDate = new Date();
+    moveOutDate.setDate(moveOutDate.getDate() + noticePeriodDays);
+
+    await personRepository.update(personId, session.user.tenantId, {
+      noticeRequestedAt,
+      noticeReason: reason,
+      moveOutDate,
+    } as any);
+
+    revalidatePath('/persons');
+    revalidatePath('/my-details');
+    return { success: true, moveOutDate };
+  } catch (error) {
+    console.error('Request notice error:', error);
+    return { error: 'Failed to submit notice request' };
+  }
+}
+
+export async function approveMoveOutNotice(personId: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role === 'member') {
+    return { error: 'Unauthorized' };
+  }
+
+  try {
+    const noticeApprovedAt = new Date();
+
+    await personRepository.update(personId, session.user.tenantId, {
+      noticeApprovedAt,
+    } as any);
+
+    revalidatePath('/persons');
+    return { success: true };
+  } catch (error) {
+    console.error('Approve notice error:', error);
+    return { error: 'Failed to approve notice' };
+  }
+}
+
+export async function cancelMoveOutNotice(personId: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user) {
+    return { error: 'Unauthorized' };
+  }
+
+  try {
+    await personRepository.update(personId, session.user.tenantId, {
+      noticeRequestedAt: null,
+      noticeApprovedAt: null,
+      moveOutDate: null,
+      noticeReason: null,
+    } as any);
+
+    revalidatePath('/persons');
+    revalidatePath('/my-details');
+    return { success: true };
+  } catch (error) {
+    console.error('Cancel notice error:', error);
+    return { error: 'Failed to cancel notice' };
+  }
+}
+
+export async function rejectMoveOutNotice(personId: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role === 'member') {
+    return { error: 'Unauthorized' };
+  }
+
+  try {
+    await personRepository.update(personId, session.user.tenantId, {
+      noticeRequestedAt: null,
+      noticeApprovedAt: null,
+      moveOutDate: null,
+      noticeReason: null,
+    } as any);
+
+    revalidatePath('/persons');
+    revalidatePath('/my-details');
+    return { success: true };
+  } catch (error) {
+    console.error('Reject notice error:', error);
+    return { error: 'Failed to reject notice' };
+  }
 }

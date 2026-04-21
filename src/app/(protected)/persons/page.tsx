@@ -10,9 +10,12 @@ import { getBlocks } from '@/actions/block.actions';
 import { sendNotificationToPerson } from '@/actions/notification.actions';
 import { createNotification } from '@/actions/in-app-notification.actions';
 import { SkeletonTable } from '@/components/ui/Skeleton';
-import { MessageSquare, Loader2 } from 'lucide-react';
+import { MessageSquare, Loader2, AlertTriangle, Check, Clock, X } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 import { NotificationModal } from '@/components/ui/NotificationModal';
+import { Pagination } from '@/components/ui/Pagination';
+import { approveMoveOutNotice, rejectMoveOutNotice, cancelMoveOutNotice } from '@/actions/person.actions';
+import { getCurrentPG } from '@/actions/pg.actions';
 import styles from './page.module.css';
 
 export default function PersonsPage() {
@@ -24,6 +27,78 @@ export default function PersonsPage() {
   const [blockMap, setBlockMap] = useState<Record<string, string>>({});
   const [sendingNotification, setSendingNotification] = useState<string | null>(null);
   const [notificationPerson, setNotificationPerson] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [noticePeriodDays, setNoticePeriodDays] = useState(30);
+  const [approvingId, setApprovingId] = useState<string | null>(null);
+  const [noticeModalPerson, setNoticeModalPerson] = useState<any>(null);
+
+  useEffect(() => {
+    getCurrentPG().then(pg => {
+      if (pg) setNoticePeriodDays(pg.noticePeriodDays || 30);
+    }).catch(() => {});
+  }, []);
+
+  const handleApproveNotice = async () => {
+    if (!noticeModalPerson) return;
+    setApprovingId(noticeModalPerson._id);
+    const result = await approveMoveOutNotice(noticeModalPerson._id);
+    if (result?.success) {
+      showSuccess(`${noticeModalPerson.name}'s move-out notice approved!`);
+      refetch();
+    } else {
+      showError(result?.error || 'Failed to approve notice');
+    }
+    setApprovingId(null);
+    setNoticeModalPerson(null);
+  };
+
+  const handleRejectNotice = async () => {
+    if (!noticeModalPerson) return;
+    setApprovingId(noticeModalPerson._id);
+    const result = await rejectMoveOutNotice(noticeModalPerson._id);
+    if (result?.success) {
+      showSuccess(`${noticeModalPerson.name}'s move-out notice rejected!`);
+      refetch();
+    } else {
+      showError(result?.error || 'Failed to reject notice');
+    }
+    setApprovingId(null);
+    setNoticeModalPerson(null);
+  };
+
+  const handleCancelNotice = async () => {
+    if (!noticeModalPerson) return;
+    setApprovingId(noticeModalPerson._id);
+    const result = await cancelMoveOutNotice(noticeModalPerson._id);
+    if (result?.success) {
+      showSuccess(`Notice cancelled for ${noticeModalPerson.name}!`);
+      refetch();
+    } else {
+      showError(result?.error || 'Failed to cancel notice');
+    }
+    setApprovingId(null);
+    setNoticeModalPerson(null);
+  };
+
+  const filteredPersons = persons?.filter((person: any) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      person.name?.toLowerCase().includes(query) ||
+      person.phone?.includes(query) ||
+      person.roomNumber?.toLowerCase().includes(query) ||
+      person.aadharCard?.includes(query)
+    );
+  }) || [];
+
+  useEffect(() => {
+    const maxPage = Math.ceil((persons?.length || 0) / itemsPerPage);
+    if (currentPage > maxPage && maxPage > 0) {
+      setCurrentPage(maxPage);
+    }
+  }, [persons?.length, itemsPerPage]);
 
   useEffect(() => {
     getBlocks().then(data => {
@@ -122,11 +197,28 @@ export default function PersonsPage() {
           )}
         </div>
 
-        {persons?.length === 0 ? (
+        <div className={styles.searchWrapper}>
+          <input
+            type="text"
+            placeholder="Search by name, phone, room..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className={styles.searchInput}
+          />
+        </div>
+
+        {filteredPersons.length === 0 && searchQuery ? (
+          <div className={styles.empty}>
+            <p>No residents found for "{searchQuery}"</p>
+          </div>
+        ) : filteredPersons.length === 0 ? (
           <div className={styles.empty}>
             <p>No residents yet. Add your first resident!</p>
           </div>
-        ) : (
+) : (
           <div className={styles.tableWrapper}>
             <table className={styles.table}>
               <thead>
@@ -142,7 +234,9 @@ export default function PersonsPage() {
                 </tr>
               </thead>
               <tbody>
-                {persons?.map((person: any) => (
+                {filteredPersons
+                  ?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                  .map((person: any) => (
                   <tr key={person._id} className={!person.isActive ? styles.inactive : ''}>
                     <td>
                       {person.blockId && blockMap[person.blockId] && (
@@ -163,20 +257,31 @@ export default function PersonsPage() {
                       <span className={`${styles.status} ${person.isActive ? styles.active : styles.inactiveStatus}`}>
                         {person.isActive ? 'Active' : 'Inactive'}
                       </span>
+                      {person.noticeRequestedAt && (
+                        <button
+                          className={styles.noticeBadge}
+                          onClick={() => setNoticeModalPerson(person)}
+                          disabled={approvingId === person._id}
+                          title={person.moveOutDate ? `Moving out on ${new Date(person.moveOutDate).toLocaleDateString()}` : 'Notice pending'}
+                        >
+                          {person.noticeApprovedAt ? <Check size={12} /> : <AlertTriangle size={12} />}
+                          {person.noticeApprovedAt ? 'Approved' : 'Leaving'}
+                        </button>
+                      )}
                     </td>
                     {canEdit && (
                       <td>
                         <div className={styles.actions}>
                           <button
                             onClick={() => handleSendNotification(person)}
+                            className={styles.notifyBtn}
                             disabled={sendingNotification === person._id}
-                            className={styles.notificationBtn}
-                            title="Send WhatsApp Notification"
+                            title="Send notification"
                           >
                             {sendingNotification === person._id ? (
-                              <Loader2 size={16} className={styles.spinner} />
+                              <Loader2 size={14} className={styles.spin} />
                             ) : (
-                              <MessageSquare size={16} />
+                              <MessageSquare size={14} />
                             )}
                           </button>
                           <Link href={`/persons/${person._id}`}>
@@ -197,16 +302,96 @@ export default function PersonsPage() {
                 ))}
               </tbody>
             </table>
+<Pagination
+              currentPage={currentPage}
+              totalItems={filteredPersons.length || 0}
+              itemsPerPage={itemsPerPage}
+              onPageChange={(page) => {
+                setCurrentPage(page);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onPageSizeChange={(size) => {
+                setItemsPerPage(size);
+                setCurrentPage(1);
+              }}
+            />
           </div>
         )}
 
-        {notificationPerson && (
+{notificationPerson && (
           <NotificationModal
             isOpen={!!notificationPerson}
             onClose={() => setNotificationPerson(null)}
             person={notificationPerson}
             onSend={onSendNotification}
           />
+        )}
+
+        {noticeModalPerson && (
+          <div className={styles.modalOverlay} onClick={() => setNoticeModalPerson(null)}>
+            <div className={styles.modal} onClick={e => e.stopPropagation()}>
+              <div className={styles.modalHeader}>
+                <h2>Move-Out Notice</h2>
+                <button className={styles.closeBtn} onClick={() => setNoticeModalPerson(null)}>×</button>
+              </div>
+              
+              <div className={styles.modalBody}>
+                <div className={styles.personInfo}>
+                  <h3>{noticeModalPerson.name}</h3>
+                  <p>Room {noticeModalPerson.roomNumber}</p>
+                </div>
+
+                <div className={styles.noticeInfo}>
+                  <div className={styles.infoRow}>
+                    <span>Notice Submitted:</span>
+                    <span>{noticeModalPerson.noticeRequestedAt ? new Date(noticeModalPerson.noticeRequestedAt).toLocaleDateString() : '-'}</span>
+                  </div>
+                  <div className={styles.infoRow}>
+                    <span>Move-Out Date:</span>
+                    <span>{noticeModalPerson.moveOutDate ? new Date(noticeModalPerson.moveOutDate).toLocaleDateString() : '-'}</span>
+                  </div>
+                  <div className={styles.infoRow}>
+                    <span>Reason:</span>
+                    <span>{noticeModalPerson.noticeReason || 'Not specified'}</span>
+                  </div>
+                  <div className={styles.infoRow}>
+                    <span>Status:</span>
+                    <span className={noticeModalPerson.noticeApprovedAt ? styles.approved : styles.pending}>
+                      {noticeModalPerson.noticeApprovedAt ? 'Approved' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className={styles.modalActions}>
+                  {!noticeModalPerson.noticeApprovedAt && (
+                    <button 
+                      className={styles.approveBtn}
+                      onClick={handleApproveNotice}
+                      disabled={approvingId === noticeModalPerson._id}
+                    >
+                      <Check size={16} /> Approve
+                    </button>
+                  )}
+                  {!noticeModalPerson.noticeApprovedAt && (
+                    <button 
+                      className={styles.rejectBtn}
+                      onClick={handleRejectNotice}
+                      disabled={approvingId === noticeModalPerson._id}
+                    >
+                      <X size={16} /> Reject
+                    </button>
+                  )}
+                  <button 
+                    className={styles.cancelBtn}
+                    onClick={handleCancelNotice}
+                    disabled={approvingId === noticeModalPerson._id}
+                  >
+                    Cancel Notice
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </MainLayout>

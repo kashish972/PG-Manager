@@ -13,6 +13,7 @@ import QRCode from 'react-qr-code';
 import { jsPDF } from 'jspdf';
 import { FileText } from 'lucide-react';
 import { SkeletonStats, SkeletonTable } from '@/components/ui/Skeleton';
+import { Pagination } from '@/components/ui/Pagination';
 import styles from './page.module.css';
 
 export default function PaymentsPage() {
@@ -24,8 +25,30 @@ export default function PaymentsPage() {
   const [blocks, setBlocks] = useState<any[]>([]);
   const [generating, setGenerating] = useState(false);
   const [upiId, setUpiId] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredPayments = payments?.filter((payment: any) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    const person = persons.find((p: any) => p._id === payment.personId);
+    return (
+      payment.month?.toLowerCase().includes(query) ||
+      payment.amount?.toString().includes(query) ||
+      payment.status?.toLowerCase().includes(query) ||
+      person?.name?.toLowerCase().includes(query)
+    );
+  }) || [];
 
   const canEdit = session?.user?.role !== 'member';
+
+  useEffect(() => {
+    const maxPage = Math.ceil((payments?.length || 0) / itemsPerPage);
+    if (currentPage > maxPage && maxPage > 0) {
+      setCurrentPage(maxPage);
+    }
+  }, [payments?.length, itemsPerPage]);
 
   useEffect(() => {
     getPersons().then(setPersons).catch(() => {});
@@ -151,7 +174,24 @@ export default function PaymentsPage() {
           )}
         </div>
 
-        {payments?.length === 0 ? (
+        <div className={styles.searchWrapper}>
+          <input
+            type="text"
+            placeholder="Search by month, amount, status, name..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className={styles.searchInput}
+          />
+        </div>
+
+        {filteredPayments.length === 0 && searchQuery ? (
+          <div className={styles.empty}>
+            <p>No payments found for "{searchQuery}"</p>
+          </div>
+        ) : filteredPayments.length === 0 ? (
           <div className={styles.empty}>
             <p>No payments yet.</p>
           </div>
@@ -169,7 +209,9 @@ export default function PaymentsPage() {
                 </tr>
               </thead>
               <tbody>
-                {payments?.map((payment: any) => (
+                {filteredPayments
+                  ?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                  .map((payment: any) => (
                   <tr key={payment._id}>
                     <td>
                       <button 
@@ -208,6 +250,19 @@ export default function PaymentsPage() {
                 ))}
               </tbody>
             </table>
+            <Pagination
+              currentPage={currentPage}
+              totalItems={filteredPayments.length || 0}
+              itemsPerPage={itemsPerPage}
+              onPageChange={(page) => {
+                setCurrentPage(page);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onPageSizeChange={(size) => {
+                setItemsPerPage(size);
+                setCurrentPage(1);
+              }}
+            />
           </div>
         )}
 

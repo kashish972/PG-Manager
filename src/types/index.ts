@@ -30,6 +30,10 @@ export interface IPerson {
   monthlyRent: number;
   securityDeposit: number;
   isActive: boolean;
+  noticeRequestedAt?: Date;
+  noticeApprovedAt?: Date;
+  moveOutDate?: Date;
+  noticeReason?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -59,6 +63,7 @@ export interface IPG {
   defaultCapacity: number;
   roomMappings?: { [key: string]: string };
   upiId?: string;
+  noticePeriodDays?: number;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { Sidebar } from './Sidebar';
+import { Breadcrumb } from './Breadcrumb';
 import { useState } from 'react';
 import styles from './MainLayout.module.css';
 
@@ -23,6 +24,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
           </svg>
         </button>
         <div className={styles.content}>
+          <Breadcrumb />
           {children}
         </div>
       </main>

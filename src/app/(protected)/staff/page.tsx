@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { getStaff, getStaffStats, deleteStaff } from '@/actions/staff.actions';
 import { User, Wrench, ChefHat, Shield, Sparkles, ClipboardList, Trash2 } from 'lucide-react';
 import { SkeletonStats } from '@/components/ui/Skeleton';
+import { Pagination } from '@/components/ui/Pagination';
 import styles from './page.module.css';
 
 const ROLE_ICONS: Record<string, any> = {
@@ -36,6 +37,21 @@ export default function StaffPage() {
   const [stats, setStats] = useState({ total: 0, active: 0, monthlySalary: 0, pendingSalary: 0 });
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  const filteredStaff = staff?.filter((s: any) => {
+    const matchesFilter = filter === 'all' || s.role === filter;
+    if (!matchesFilter) return false;
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      s.name?.toLowerCase().includes(query) ||
+      s.phone?.includes(query) ||
+      s.role?.toLowerCase().includes(query)
+    );
+  }) || [];
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -66,12 +82,6 @@ export default function StaffPage() {
     setStaff(updated || []);
     setStats(updatedStats);
   };
-
-  const filteredStaff = filter === 'all' 
-    ? staff 
-    : filter === 'active' 
-      ? staff.filter(s => s.isActive)
-      : staff.filter(s => !s.isActive);
 
   if (loading || session?.user?.role === 'member') {
     return (
@@ -142,13 +152,28 @@ export default function StaffPage() {
           </button>
         </div>
 
+        <div className={styles.searchWrapper}>
+          <input
+            type="text"
+            placeholder="Search by name, phone, role..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className={styles.searchInput}
+          />
+        </div>
+
         {filteredStaff.length === 0 ? (
           <div className={styles.empty}>
             <p>No staff members found.</p>
           </div>
         ) : (
           <div className={styles.grid}>
-            {filteredStaff.map((member: any) => {
+            {filteredStaff
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map((member: any) => {
               const RoleIcon = ROLE_ICONS[member.role] || User;
               return (
               <div 

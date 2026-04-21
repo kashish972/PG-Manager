@@ -13,6 +13,7 @@ export default function UPISettingsPage() {
   const router = useRouter();
   const [pg, setPg] = useState<any>(null);
   const [upiId, setUpiId] = useState('');
+  const [noticePeriodDays, setNoticePeriodDays] = useState(30);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -30,6 +31,7 @@ export default function UPISettingsPage() {
       getCurrentPG().then(data => {
         setPg(data);
         setUpiId(data?.upiId || '');
+        setNoticePeriodDays(data?.noticePeriodDays || 30);
         setLoading(false);
       }).catch(() => setLoading(false));
     }
@@ -42,6 +44,7 @@ export default function UPISettingsPage() {
 
     const form = new FormData();
     form.append('upiId', upiId);
+    form.append('noticePeriodDays', String(noticePeriodDays));
 
     const result = await updateUPISettings(form);
     
@@ -93,10 +96,29 @@ export default function UPISettingsPage() {
                   onChange={(e) => setUpiId(e.target.value)}
                   placeholder="yourname@upi"
                   className={styles.input}
-                  required
                 />
                 <span className={styles.hint}>
                   Example: owner@yesbank, yourname@gpay, name@icici
+                </span>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label htmlFor="noticePeriodDays" className={styles.label}>Notice Period (Days)</label>
+                <select
+                  id="noticePeriodDays"
+                  value={noticePeriodDays}
+                  onChange={(e) => setNoticePeriodDays(Number(e.target.value))}
+                  className={styles.input}
+                >
+                  <option value={7}>7 days</option>
+                  <option value={15}>15 days</option>
+                  <option value={30}>30 days</option>
+                  <option value={45}>45 days</option>
+                  <option value={60}>60 days</option>
+                  <option value={90}>90 days</option>
+                </select>
+                <span className={styles.hint}>
+                  Members must give this much notice before moving out
                 </span>
               </div>
 

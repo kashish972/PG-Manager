@@ -1,0 +1,205 @@
+.container {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.loading, .notFound {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 60px 20px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+.noticeCard, .formCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  max-width: 600px;
+}
+
+.noticeCard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.noticeHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.noticeHeader h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+}
+
+.warningIcon {
+  color: var(--warning);
+}
+
+.noticeDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.detailRow span:first-child {
+  color: var(--text-muted);
+}
+
+.daysRemaining {
+  color: var(--warning) !important;
+  font-weight: 600;
+}
+
+.approvedBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 217, 165, 0.15);
+  color: var(--success);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  width: fit-content;
+}
+
+.pendingBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 201, 71, 0.15);
+  color: var(--warning);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  width: fit-content;
+}
+
+.cancelBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  width: fit-content;
+}
+
+.cancelBtn:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.description {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+}
+
+.textarea {
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+  font-size: 1rem;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.message {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+.message.success {
+  background: rgba(0, 217, 165, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(0, 217, 165, 0.3);
+}
+
+.message.error {
+  background: rgba(233, 69, 96, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(233, 69, 96, 0.3);
+}
+
+.submitBtn {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  width: 100%;
+}
+
+.submitBtn:hover:not(:disabled) {
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
