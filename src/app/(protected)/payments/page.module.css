@@ -410,3 +410,10 @@
   display: inline-block;
   box-shadow: var(--shadow-md);
 }
+
+.upiIdText {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin: 8px 0 0 0;
+  font-family: monospace;
+}

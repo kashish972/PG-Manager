@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, TrendingUp, User, Users, Home, IndianRupee, Megaphone, Wrench, FileText, Briefcase, DoorOpen, Package, Settings, Sun, Moon } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, User, Users, Home, IndianRupee, Megaphone, Wrench, FileText, Briefcase, DoorOpen, Package, Settings, Sun, Moon, Smartphone, CreditCard } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
 const menuItems = [
@@ -14,6 +14,7 @@ const menuItems = [
   { href: '/persons', label: 'Residents', icon: Users, roles: ['owner', 'admin'] },
   { href: '/rooms', label: 'Rooms', icon: Home, roles: ['owner', 'admin'] },
   { href: '/payments', label: 'Payments', icon: IndianRupee, roles: ['owner', 'admin'] },
+  { href: '/pay-rent', label: 'Pay Rent', icon: CreditCard, roles: ['member'] },
   { href: '/notices', label: 'Notices', icon: Megaphone, roles: ['owner', 'admin', 'member'] },
   { href: '/maintenance', label: 'Maintenance', icon: Wrench, roles: ['owner', 'admin', 'member'] },
   { href: '/complaints', label: 'Complaints', icon: FileText, roles: ['owner', 'admin', 'member'] },
@@ -21,6 +22,7 @@ const menuItems = [
   { href: '/visitors', label: 'Visitors', icon: DoorOpen, roles: ['owner', 'admin'] },
   { href: '/inventory', label: 'Inventory', icon: Package, roles: ['owner', 'admin'] },
   { href: '/users', label: 'Users', icon: Settings, roles: ['owner', 'admin'] },
+  { href: '/upi-settings', label: 'UPI Settings', icon: Smartphone, roles: ['owner'] },
 ];
 
 export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {

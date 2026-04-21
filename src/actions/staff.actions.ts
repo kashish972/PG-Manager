@@ -6,6 +6,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { StaffRole } from '@/types';
+import { deleteImage } from '@/lib/cloudinary';
 
 export async function getStaff() {
   const session = await getServerSession(authOptions);
@@ -99,6 +100,8 @@ export async function createStaff(formData: FormData) {
   const role = formData.get('role') as StaffRole;
   const joinDate = formData.get('joinDate') as string;
   const salary = Number(formData.get('salary')) || 0;
+  const photo = formData.get('photo') as string || undefined;
+  const aadharCardImage = formData.get('aadharCardImage') as string || undefined;
 
   if (!name || !phone || !role || !joinDate) {
     return { error: 'All fields are required' };
@@ -110,6 +113,8 @@ export async function createStaff(formData: FormData) {
     role,
     joinDate: new Date(joinDate),
     salary,
+    photo,
+    aadharCardImage,
   });
 
   revalidatePath('/staff');
@@ -120,6 +125,32 @@ export async function updateStaff(id: string, formData: FormData) {
   const session = await getServerSession(authOptions);
   if (!session?.user || session.user.role === 'member') {
     return { error: 'Unauthorized' };
+  }
+
+  const currentStaff = await staffRepository.findById(id, session.user.tenantId);
+  if (!currentStaff) {
+    return { error: 'Staff not found' };
+  }
+
+  const newPhoto = formData.get('photo') as string;
+  const newAadharImage = formData.get('aadharCardImage') as string;
+
+  if (currentStaff.photo && currentStaff.photo !== newPhoto) {
+    const publicId = currentStaff.photo.split('/').slice(-2).join('/').split('.')[0];
+    if (currentStaff.photo.includes('cloudinary')) {
+      try {
+        await deleteImage(publicId);
+      } catch {}
+    }
+  }
+
+  if (currentStaff.aadharCardImage && currentStaff.aadharCardImage !== newAadharImage) {
+    const publicId = currentStaff.aadharCardImage.split('/').slice(-2).join('/').split('.')[0];
+    if (currentStaff.aadharCardImage.includes('cloudinary')) {
+      try {
+        await deleteImage(publicId);
+      } catch {}
+    }
   }
 
   const name = formData.get('name') as string;
@@ -136,6 +167,8 @@ export async function updateStaff(id: string, formData: FormData) {
   if (joinDate) updateData.joinDate = new Date(joinDate);
   if (!isNaN(salary)) updateData.salary = salary;
   updateData.isActive = isActive;
+  if (newPhoto !== undefined) updateData.photo = newPhoto || undefined;
+  if (newAadharImage !== undefined) updateData.aadharCardImage = newAadharImage || undefined;
 
   await staffRepository.update(id, session.user.tenantId, updateData);
 

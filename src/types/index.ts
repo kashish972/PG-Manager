@@ -17,6 +17,10 @@ export interface IPerson {
   _id: ObjectId;
   name: string;
   aadharCard: string;
+  aadharCardImage?: string;
+  aadharCardPublicId?: string;
+  photo?: string;
+  photoPublicId?: string;
   phone: string;
   email?: string;
   address?: string;
@@ -54,6 +58,7 @@ export interface IPG {
   totalRooms: number;
   defaultCapacity: number;
   roomMappings?: { [key: string]: string };
+  upiId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -106,6 +111,10 @@ export interface CreateUserInput {
 export interface CreatePersonInput {
   name: string;
   aadharCard: string;
+  aadharCardImage?: string;
+  aadharCardPublicId?: string;
+  photo?: string;
+  photoPublicId?: string;
   phone: string;
   email?: string;
   address?: string;
@@ -260,6 +269,8 @@ export interface IStaff {
   joinDate: Date;
   salary: number;
   isActive: boolean;
+  photo?: string;
+  aadharCardImage?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -280,6 +291,8 @@ export interface CreateStaffInput {
   role: StaffRole;
   joinDate: Date;
   salary: number;
+  photo?: string;
+  aadharCardImage?: string;
 }
 
 export interface UpdateStaffInput extends Partial<CreateStaffInput> {

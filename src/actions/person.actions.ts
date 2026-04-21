@@ -23,6 +23,8 @@ export async function getPersons() {
     monthlyRent: p.monthlyRent,
     securityDeposit: p.securityDeposit,
     isActive: p.isActive,
+    photo: p.photo,
+    aadharCardImage: p.aadharCardImage,
     createdAt: p.createdAt,
     updatedAt: p.updatedAt,
   }));
@@ -45,6 +47,8 @@ export async function getActivePersons() {
     monthlyRent: p.monthlyRent,
     securityDeposit: p.securityDeposit,
     isActive: p.isActive,
+    photo: p.photo,
+    aadharCardImage: p.aadharCardImage,
     createdAt: p.createdAt,
     updatedAt: p.updatedAt,
   }));
@@ -68,6 +72,8 @@ export async function getPerson(id: string) {
     monthlyRent: p.monthlyRent,
     securityDeposit: p.securityDeposit,
     isActive: p.isActive,
+    photo: p.photo,
+    aadharCardImage: p.aadharCardImage,
     createdAt: p.createdAt,
     updatedAt: p.updatedAt,
   };
@@ -107,6 +113,8 @@ export async function createPerson(formData: FormData) {
   const person = {
     name,
     aadharCard: formData.get('aadharCard') as string,
+    aadharCardImage: formData.get('aadharCardImage') as string || undefined,
+    photo: formData.get('photo') as string || undefined,
     phone: formData.get('phone') as string,
     email,
     address: formData.get('address') as string,
@@ -143,6 +151,8 @@ export async function updatePerson(id: string, formData: FormData) {
   const updateData: any = {
     name: formData.get('name') as string,
     aadharCard: formData.get('aadharCard') as string,
+    aadharCardImage: formData.get('aadharCardImage') as string || undefined,
+    photo: formData.get('photo') as string || undefined,
     phone: formData.get('phone') as string,
     email: formData.get('email') as string,
     address: formData.get('address') as string,

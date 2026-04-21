@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createStaff } from '@/actions/staff.actions';
+import { ImageUpload } from '@/components/ui/ImageUpload';
 import styles from './page.module.css';
 
 export default function AddStaffPage() {
@@ -12,6 +13,8 @@ export default function AddStaffPage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [photo, setPhoto] = useState('');
+  const [aadharImage, setAadharImage] = useState('');
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -54,6 +57,9 @@ export default function AddStaffPage() {
         <h1 className={styles.title}>Add New Staff</h1>
 
         <form onSubmit={handleSubmit} className={styles.form}>
+          <input type="hidden" name="photo" value={photo} />
+          <input type="hidden" name="aadharCardImage" value={aadharImage} />
+
           <div className={styles.field}>
             <label className={styles.label}>Full Name *</label>
             <input
@@ -73,6 +79,23 @@ export default function AddStaffPage() {
               className={styles.input}
               required
               placeholder="Enter phone number"
+            />
+          </div>
+
+          <div className={styles.field}>
+            <ImageUpload
+              value={photo}
+              onChange={(url) => setPhoto(url)}
+              label="Staff Photo"
+            />
+          </div>
+
+          <div className={styles.field}>
+            <ImageUpload
+              value={aadharImage}
+              onChange={(url) => setAadharImage(url)}
+              label="Aadhar Card Image"
+              aspectRatio="landscape"
             />
           </div>
 

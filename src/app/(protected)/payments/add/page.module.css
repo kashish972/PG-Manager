@@ -3,6 +3,7 @@
 }
 
 .title {
+  color: var(--text-primary);
   font-size: 2rem;
   margin-bottom: 32px;
 }
@@ -14,9 +15,10 @@
 }
 
 .form {
-  background: #1f1f3a;
+  background: var(--surface);
   padding: 24px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
 }
 
 @media (max-width: 480px) {
@@ -52,7 +54,7 @@
 }
 
 .label {
-  color: #a0a0b0;
+  color: var(--text-secondary);
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -60,21 +62,21 @@
 .input,
 .select,
 .textarea {
-  background: #0f0f23;
-  border: 1px solid #2a2a4e;
-  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   padding: 12px 16px;
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .input:focus,
 .select:focus,
 .textarea:focus {
   outline: none;
-  border-color: #e94560;
-  box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 .textarea {
@@ -85,22 +87,22 @@
 .submitBtn {
   margin-top: 24px;
   padding: 14px 32px;
-  background: #e94560;
+  background: var(--accent);
   border: none;
-  border-radius: 8px;
-  color: #ffffff;
+  border-radius: var(--radius-md);
+  color: white;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
+  transition: background var(--transition-fast), transform var(--transition-fast);
 }
 
 .submitBtn:hover:not(:disabled) {
-  background: #d63850;
+  background: var(--accent-hover);
   transform: translateY(-2px);
 }
 
 .submitBtn:disabled {
-  background: #4a4a6a;
+  background: var(--text-muted);
   cursor: not-allowed;
 }

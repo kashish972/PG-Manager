@@ -13,6 +13,8 @@ export class StaffRepository {
       joinDate: input.joinDate,
       salary: input.salary,
       isActive: true,
+      photo: input.photo,
+      aadharCardImage: input.aadharCardImage,
       createdAt: new Date(),
       updatedAt: new Date(),
     };

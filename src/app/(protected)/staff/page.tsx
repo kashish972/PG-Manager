@@ -157,7 +157,11 @@ export default function StaffPage() {
               >
                 <div className={styles.cardHeader}>
                   <div className={styles.avatar}>
-                    <RoleIcon size={32} />
+                    {member.photo ? (
+                      <img src={member.photo} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-lg)' }} />
+                    ) : (
+                      <RoleIcon size={32} />
+                    )}
                   </div>
                   <div className={styles.info}>
                     <h3>{member.name}</h3>

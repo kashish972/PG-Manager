@@ -43,8 +43,9 @@ export function useUpdatePerson() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, formData }: { id: string; formData: FormData }) => updatePerson(id, formData),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['persons'] });
+      queryClient.invalidateQueries({ queryKey: ['person', variables.id] });
     },
   });
 }

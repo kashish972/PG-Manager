@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { useEffect, useState } from 'react';
 import { getBlocks } from '@/actions/block.actions';
 import { getPersons } from '@/actions/person.actions';
+import { ImageUpload } from '@/components/ui/ImageUpload';
 import styles from './Form.module.css';
 
 const personSchema = z.object({
@@ -19,6 +20,8 @@ const personSchema = z.object({
   moveInDate: z.string().min(1, 'Move in date is required'),
   monthlyRent: z.number().min(0, 'Rent must be positive'),
   securityDeposit: z.number().min(0, 'Deposit must be positive'),
+  aadharCardImage: z.string().optional(),
+  photo: z.string().optional(),
 });
 
 type PersonFormData = z.infer<typeof personSchema>;
@@ -42,10 +45,13 @@ export function PersonForm({ onSubmit, defaultValues, isLoading }: PersonFormPro
     defaultValues,
   });
 
-  const [blocks, setBlocks] = useState<any[]>([]);
+const [blocks, setBlocks] = useState<any[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-useEffect(() => {
+  const [aadharImage, setAadharImage] = useState(defaultValues?.aadharCardImage || '');
+  const [photo, setPhoto] = useState(defaultValues?.photo || '');
+
+  useEffect(() => {
     console.log('Loading blocks...');
     getBlocks().then(data => {
       console.log('blocks data:', JSON.stringify(data));
@@ -84,6 +90,8 @@ useEffect(() => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+      <input type="hidden" {...register('aadharCardImage')} value={aadharImage} />
+      <input type="hidden" {...register('photo')} value={photo} />
       <div className={styles.grid}>
         <div className={styles.field}>
           <label className={styles.label}>Name *</label>
@@ -112,6 +120,29 @@ useEffect(() => {
         <div className={styles.field}>
           <label className={styles.label}>Address</label>
           <input {...register('address')} className={styles.input} />
+        </div>
+
+        <div className={styles.field}>
+          <ImageUpload
+            value={photo}
+            onChange={(url) => {
+              setPhoto(url);
+              setValue('photo', url);
+            }}
+            label="Resident Photo"
+          />
+        </div>
+
+        <div className={styles.field}>
+          <ImageUpload
+            value={aadharImage}
+            onChange={(url) => {
+              setAadharImage(url);
+              setValue('aadharCardImage', url);
+            }}
+            label="Aadhar Card Image"
+            aspectRatio="landscape"
+          />
         </div>
 
         <div className={styles.field}>

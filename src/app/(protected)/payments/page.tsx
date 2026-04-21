@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { getPersons } from '@/actions/person.actions';
 import { getBlocks } from '@/actions/block.actions';
+import { getCurrentPG } from '@/actions/pg.actions';
 import QRCode from 'react-qr-code';
 import { jsPDF } from 'jspdf';
 import { FileText } from 'lucide-react';
@@ -22,12 +23,16 @@ export default function PaymentsPage() {
   const [persons, setPersons] = useState<any[]>([]);
   const [blocks, setBlocks] = useState<any[]>([]);
   const [generating, setGenerating] = useState(false);
+  const [upiId, setUpiId] = useState('');
 
   const canEdit = session?.user?.role !== 'member';
 
   useEffect(() => {
     getPersons().then(setPersons).catch(() => {});
     getBlocks().then(setBlocks).catch(() => {});
+    getCurrentPG().then(data => {
+      if (data) setUpiId(data.upiId || '');
+    }).catch(() => {});
   }, []);
 
   async function handleDelete(id: string) {
@@ -107,8 +112,8 @@ export default function PaymentsPage() {
   };
 
   const generateUPIQR = () => {
-    if (!selectedPayment) return '';
-    return `upi://pay?pa=owner@upi&pn=PG+Manager&am=${selectedPayment.amount}&tn=Rent+${selectedPayment.month}`;
+    if (!selectedPayment || !upiId) return '';
+    return `upi://pay?pa=${upiId}&pn=PG+Manager&am=${selectedPayment.amount}&tn=Rent+${selectedPayment.month}`;
   };
 
   if (isLoading) {
@@ -239,14 +244,6 @@ export default function PaymentsPage() {
                 <button className={styles.receiptBtn} onClick={generateReceipt}>
                   <FileText className={styles.icon} size={16} /> Download Receipt
                 </button>
-              </div>
-
-              <div className={styles.qrSection}>
-                <h3>UPI Payment QR</h3>
-                <p className={styles.qrNote}>Scan to pay ₹{selectedPayment.amount?.toLocaleString()}</p>
-                <div className={styles.qrCode}>
-                  <QRCode value={generateUPIQR()} size={120} />
-                </div>
               </div>
             </div>
           </div>
