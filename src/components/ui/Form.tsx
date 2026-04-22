@@ -52,6 +52,7 @@ const [blocks, setBlocks] = useState<any[]>([]);
   const [photo, setPhoto] = useState(defaultValues?.photo || '');
 
   useEffect(() => {
+    console.log('Fetching blocks...ajiaa');
     getBlocks().then(data => {
       setBlocks(data || []);
       setIsLoaded(true);
