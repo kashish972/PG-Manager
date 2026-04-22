@@ -52,7 +52,7 @@ const [blocks, setBlocks] = useState<any[]>([]);
   const [photo, setPhoto] = useState(defaultValues?.photo || '');
 
   useEffect(() => {
-    console.log('Loading blocks...');
+    console.log('Loading blocks123333...');
     getBlocks().then(data => {
       console.log('blocks data:', JSON.stringify(data));
       setBlocks(data || []);
