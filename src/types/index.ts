@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
 
-export type UserRole = 'owner' | 'admin' | 'member';
+export type UserRole = 'owner' | 'admin' | 'member' | 'superadmin';
 
 export interface IUser {
   _id: ObjectId;
@@ -52,6 +52,23 @@ export interface IBlock {
   updatedAt: Date;
 }
 
+export type PaymentStatus = 'paid' | 'pending' | 'overdue';
+export type PaymentMethod = 'cash' | 'transfer' | 'upi' | 'razorpay';
+
+export interface IRentPayment {
+  _id: ObjectId;
+  personId: ObjectId;
+  amount: number;
+  paymentDate: Date;
+  month: string;
+  status: PaymentStatus;
+  paymentMethod: PaymentMethod;
+  notes?: string;
+  razorpayPaymentId?: string;
+  razorpayOrderId?: string;
+  createdAt: Date;
+}
+
 export interface IPG {
   _id: ObjectId;
   name: string;
@@ -64,37 +81,15 @@ export interface IPG {
   roomMappings?: { [key: string]: string };
   upiId?: string;
   noticePeriodDays?: number;
+  razorpayKeyId?: string;
+  razorpayKeySecret?: string;
+  isRazorpayEnabled?: boolean;
+  status: 'active' | 'suspended';
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type PaymentStatus = 'paid' | 'pending' | 'overdue';
-export type PaymentMethod = 'cash' | 'transfer' | 'upi';
-
-export interface IRentPayment {
-  _id: ObjectId;
-  personId: ObjectId;
-  amount: number;
-  paymentDate: Date;
-  month: string;
-  status: PaymentStatus;
-  paymentMethod: PaymentMethod;
-  notes?: string;
-  createdAt: Date;
-}
-
-export interface IPG {
-  _id: ObjectId;
-  name: string;
-  slug: string;
-  address: string;
-  ownerId: ObjectId;
-  monthlyRent: number;
-  totalRooms: number;
-  roomMappings?: { [key: string]: string };
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type PGStatus = 'active' | 'suspended';
 
 export interface DashboardStats {
   totalPersons: number;

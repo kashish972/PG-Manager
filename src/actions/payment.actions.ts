@@ -1,6 +1,7 @@
 'use server';
 
 import { paymentRepository } from '@/repositories/payment.repository';
+import { personRepository } from '@/repositories/person.repository';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
@@ -35,8 +36,10 @@ export async function createPayment(formData: FormData) {
     paymentDate: new Date(formData.get('paymentDate') as string),
     month: formData.get('month') as string,
     status: formData.get('status') as 'paid' | 'pending' | 'overdue',
-    paymentMethod: formData.get('paymentMethod') as 'cash' | 'transfer' | 'upi',
+    paymentMethod: formData.get('paymentMethod') as 'cash' | 'transfer' | 'upi' | 'razorpay',
     notes: formData.get('notes') as string,
+    razorpayPaymentId: formData.get('razorpayPaymentId') as string || undefined,
+    razorpayOrderId: formData.get('razorpayOrderId') as string || undefined,
   };
 
   await paymentRepository.create(session.user.tenantId, payment);
@@ -56,7 +59,7 @@ export async function updatePayment(id: string, formData: FormData) {
     paymentDate: new Date(formData.get('paymentDate') as string),
     month: formData.get('month') as string,
     status: formData.get('status') as 'paid' | 'pending' | 'overdue',
-    paymentMethod: formData.get('paymentMethod') as 'cash' | 'transfer' | 'upi',
+    paymentMethod: formData.get('paymentMethod') as 'cash' | 'transfer' | 'upi' | 'razorpay',
     notes: formData.get('notes') as string,
   };
 
@@ -64,6 +67,57 @@ export async function updatePayment(id: string, formData: FormData) {
 
   revalidatePath('/payments');
   return { success: true };
+}
+
+export async function updatePaymentByMember(id: string, formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user || session.user.role !== 'member') {
+    return { error: 'Unauthorized' };
+  }
+
+  try {
+    if (!session.user.tenantId) {
+      return { error: 'Tenant not found' };
+    }
+
+    const person = await personRepository.findByEmail(session.user.email || '', session.user.tenantId);
+    if (!person) {
+      return { error: 'Person not found for email: ' + session.user.email };
+    }
+
+    const payment = await paymentRepository.findById(id, session.user.tenantId);
+    if (!payment) {
+      return { error: 'Payment not found with id: ' + id };
+    }
+
+    if (String(payment.personId) !== String(person._id)) {
+      return { error: 'Payment does not belong to this person' };
+    }
+
+    const razorpayPaymentId = formData.get('razorpayPaymentId') as string;
+    const razorpayOrderId = formData.get('razorpayOrderId') as string;
+
+    if (!razorpayPaymentId || !razorpayOrderId) {
+      return { error: 'Missing Razorpay payment details' };
+    }
+
+    const updateData: any = {
+      status: 'paid',
+      paymentDate: new Date(),
+      paymentMethod: 'razorpay',
+      razorpayPaymentId,
+      razorpayOrderId,
+      notes: formData.get('notes') as string || 'Paid via Razorpay',
+    };
+
+    await paymentRepository.update(id, session.user.tenantId, updateData);
+
+    revalidatePath('/pay-rent');
+    return { success: true };
+  } catch (error: any) {
+    console.error('Update payment by member error:', error);
+    return { error: 'Failed to update payment: ' + (error.message || error) };
+  }
 }
 
 export async function deletePayment(id: string) {

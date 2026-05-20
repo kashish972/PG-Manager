@@ -62,6 +62,9 @@ export async function getCurrentPG() {
     roomMappings: pg.roomMappings || {},
     upiId: pg.upiId || '',
     noticePeriodDays: Number(pg.noticePeriodDays) || 30,
+    razorpayKeyId: pg.razorpayKeyId || '',
+    razorpayKeySecret: pg.razorpayKeySecret || '',
+    isRazorpayEnabled: pg.isRazorpayEnabled || false,
   };
 }
 
@@ -141,5 +144,33 @@ export async function updateUPISettings(formData: FormData) {
   } catch (error) {
     console.error('Update UPI error:', error);
     return { error: 'Failed to update UPI settings' };
+  }
+}
+
+export async function updateRazorpaySettings(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.tenantId || session.user.role !== 'owner') {
+    return { error: 'Only owner can update Razorpay settings' };
+  }
+
+  try {
+    const razorpayKeyId = formData.get('razorpayKeyId') as string;
+    const razorpayKeySecret = formData.get('razorpayKeySecret') as string;
+    const isRazorpayEnabled = formData.get('isRazorpayEnabled') === 'true';
+    
+    const pg = await pgRepository.findBySlug(session.user.tenantId);
+    if (!pg) return { error: 'PG not found' };
+
+    await pgRepository.update(pg._id.toString(), { 
+      razorpayKeyId,
+      razorpayKeySecret,
+      isRazorpayEnabled 
+    } as any);
+    revalidatePath('/payments');
+    revalidatePath('/razorpay-settings');
+    return { success: true };
+  } catch (error) {
+    console.error('Update Razorpay error:', error);
+    return { error: 'Failed to update Razorpay settings' };
   }
 }

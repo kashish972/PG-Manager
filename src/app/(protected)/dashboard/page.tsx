@@ -7,16 +7,19 @@ import { WidgetSettings } from '@/components/dashboard/WidgetSettings';
 import { DashboardDetailModal } from '@/components/dashboard/DashboardDetailModal';
 import { SkeletonStats } from '@/components/ui/Skeleton';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
 import { sendBulkRentReminders } from '@/actions/notification.actions';
-import { User, IndianRupee, Wrench, Briefcase, Users, Check, Clock, Home, TrendingUp, DollarSign, Settings as SettingsIcon, Sparkles, Bell, Loader2 } from 'lucide-react';
+import { clearActiveTenant } from '@/actions/super-admin.actions';
+import { User, IndianRupee, Wrench, Briefcase, Users, Check, Clock, Home, TrendingUp, DollarSign, Settings as SettingsIcon, Sparkles, Bell, Loader2, ShieldAlert, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 import styles from './page.module.css';
 
-export default function DashboardPage() {
+function DashboardContent() {
   const { data: session } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const superadminTenant = searchParams.get('superadmin_tenant');
   const { data: stats, isLoading, refetch } = useDashboardStats();
   const { prefs, isLoaded, updatePref, resetToDefaults, toggleAll } = useDashboardPrefs();
   const { showSuccess, showError } = useToast();
@@ -96,6 +99,22 @@ export default function DashboardPage() {
   return (
     <MainLayout>
       <div className={styles.container}>
+        {superadminTenant && (
+          <div className={styles.superAdminBanner}>
+            <ShieldAlert size={20} />
+            <span>Viewing <strong>{superadminTenant}</strong> as Super Admin</span>
+            <button
+              className={styles.backToSuperAdminBtn}
+              onClick={async () => {
+                await clearActiveTenant();
+                router.push('/super-admin/dashboard');
+              }}
+            >
+              <ArrowLeft size={16} />
+              <span>Back to Super Admin</span>
+            </button>
+          </div>
+        )}
         <div className={styles.heroSection}>
           <div className={styles.greeting}>
             <h1><Sparkles size={28} style={{marginRight: '12px', verticalAlign: 'middle'}} />{getGreeting()}!</h1>
@@ -300,5 +319,13 @@ export default function DashboardPage() {
         type={detailModal || 'total-residents'}
       />
     </MainLayout>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DashboardContent />
+    </Suspense>
   );
 }

@@ -66,7 +66,7 @@ function LoginForm() {
     });
 
     if (result?.error) {
-      setError('Invalid credentials');
+      setError(result.error === 'CredentialsSignin' ? 'Invalid credentials' : result.error);
       setLoading(false);
     } else {
       let callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
@@ -143,7 +143,7 @@ function LoginForm() {
         </form>
 
         <p className={styles.registerLink}>
-          New PG? <Link href="/register">Register here</Link>
+          <Link href="/login/super-admin">Super Admin Login</Link>
         </p>
       </div>
     </div>

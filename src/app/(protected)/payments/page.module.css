@@ -45,7 +45,7 @@
 }
 
 .generateBtn {
-  background: linear-gradient(135deg, var(--info) 0%, var(--info-hover) 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
   color: white;
   border: none;
   padding: 12px 20px;
@@ -74,7 +74,11 @@
 
 .generateBtn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+
+[data-theme="dark"] .generateBtn:hover:not(:disabled) {
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.6);
 }
 
 .generateBtn:disabled {
@@ -229,16 +233,24 @@
   gap: 8px;
 }
 
-.viewLink {
-  color: var(--accent);
+.name {
+  font-size: 0.875rem;
+  color: var(--text-primary);
   font-weight: 500;
-  text-decoration: none;
+}
+
+.viewLink {
   background: none;
   border: none;
+  color: var(--primary);
   cursor: pointer;
-  padding: 0;
-  transition: all var(--transition-fast);
-  position: relative;
+  font-size: 0.875rem;
+  text-align: left;
+  padding: 4px 0;
+}
+
+.viewLink:hover {
+  text-decoration: underline;
 }
 
 .viewLink::after {

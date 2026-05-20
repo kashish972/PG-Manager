@@ -3,7 +3,7 @@ import { connectToTenantDb } from '@/lib/db';
 import { IRentPayment, CreatePaymentInput } from '@/types';
 
 export class PaymentRepository {
-  async create(tenantId: string, input: CreatePaymentInput): Promise<IRentPayment> {
+  async create(tenantId: string, input: CreatePaymentInput & { razorpayPaymentId?: string; razorpayOrderId?: string }): Promise<IRentPayment> {
     const db = await connectToTenantDb(tenantId);
     
     const payment: Omit<IRentPayment, '_id'> = {
@@ -14,6 +14,8 @@ export class PaymentRepository {
       status: input.status,
       paymentMethod: input.paymentMethod,
       notes: input.notes,
+      razorpayPaymentId: input.razorpayPaymentId,
+      razorpayOrderId: input.razorpayOrderId,
       createdAt: new Date(),
     };
     
@@ -49,7 +51,7 @@ export class PaymentRepository {
     return db.collection<IRentPayment>('rentPayments').find({ status: 'pending' }).toArray();
   }
 
-  async update(id: string, tenantId: string, input: Partial<CreatePaymentInput>): Promise<IRentPayment | null> {
+  async update(id: string, tenantId: string, input: Partial<CreatePaymentInput> & { razorpayPaymentId?: string; razorpayOrderId?: string }): Promise<IRentPayment | null> {
     const db = await connectToTenantDb(tenantId);
     
     const updateData: any = { ...input };
@@ -137,6 +139,18 @@ export class PaymentRepository {
         ]
       })
       .toArray();
+  }
+
+  async markOverduePayments(tenantId: string, currentMonth: string): Promise<void> {
+    const db = await connectToTenantDb(tenantId);
+    
+    await db.collection('rentPayments').updateMany(
+      { 
+        status: 'pending',
+        month: { $lt: currentMonth }
+      },
+      { $set: { status: 'overdue' } }
+    );
   }
 }
 

@@ -18,6 +18,8 @@ export async function middleware(request: NextRequest) {
     '/visitors',
     '/inventory',
     '/analytics',
+    '/register',
+    '/super-admin',
   ];
 
   const isProtectedPath = protectedPaths.some((path) =>
@@ -37,6 +39,14 @@ export async function middleware(request: NextRequest) {
     }
 
     const userRole = token.role as string;
+
+    // Only superadmin can access /register and /super-admin routes
+    if (
+      (pathname.startsWith('/register') || pathname.startsWith('/super-admin')) &&
+      userRole !== 'superadmin'
+    ) {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
 
     if (pathname.startsWith('/users') && userRole === 'member') {
       return NextResponse.redirect(new URL('/dashboard', request.url));

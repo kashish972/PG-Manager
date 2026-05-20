@@ -29,6 +29,7 @@ export class PGRepository {
       monthlyRent: input.monthlyRent,
       totalRooms: input.totalRooms || 10,
       defaultCapacity: input.defaultCapacity || 2,
+      status: 'active',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -66,7 +67,7 @@ export class PGRepository {
     return db.collection<IPG>('pgs').find().toArray();
   }
 
-  async update(id: string, input: Partial<CreatePGInput>): Promise<IPG | null> {
+  async update(id: string, input: Partial<CreatePGInput & { razorpayKeyId?: string; razorpayKeySecret?: string; isRazorpayEnabled?: boolean }>): Promise<IPG | null> {
     const db = await connectToMainDb();
     
     await db.collection<IPG>('pgs').updateOne(
@@ -81,6 +82,15 @@ export class PGRepository {
     const db = await connectToMainDb();
     const result = await db.collection<IPG>('pgs').deleteOne({ _id: new ObjectId(id) });
     return result.deletedCount > 0;
+  }
+
+  async updateStatus(id: string, status: 'active' | 'suspended'): Promise<IPG | null> {
+    const db = await connectToMainDb();
+    await db.collection<IPG>('pgs').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { status, updatedAt: new Date() } }
+    );
+    return this.findById(id);
   }
 
   async checkSlugAvailability(slug: string): Promise<boolean> {

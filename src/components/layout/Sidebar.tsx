@@ -23,10 +23,24 @@ const menuItems = [
   { href: '/visitors', label: 'Visitors', icon: DoorOpen, roles: ['owner', 'admin'] },
   { href: '/inventory', label: 'Inventory', icon: Package, roles: ['owner', 'admin'] },
   { href: '/users', label: 'Users', icon: Settings, roles: ['owner', 'admin'] },
+  { href: '/reports', label: 'Reports', icon: FileText, roles: ['owner', 'admin'] },
   { href: '/upi-settings', label: 'UPI Settings', icon: Smartphone, roles: ['owner'] },
+  { href: '/razorpay-settings', label: 'Razorpay Settings', icon: CreditCard, roles: ['owner'] },
 ];
 
-export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
+const superAdminMenuItems = [
+  { href: '/super-admin/dashboard', label: 'All PGs', icon: LayoutDashboard },
+  { href: '/register', label: 'Create PG', icon: Home },
+];
+
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
+}
+
+export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: SidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -46,9 +60,13 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
-  const filteredItems = menuItems.filter(
-    (item) => !item.roles || item.roles.includes(session?.user?.role || '')
-  );
+  const isSuperAdmin = session?.user?.role === 'superadmin';
+
+  const filteredItems = isSuperAdmin 
+    ? superAdminMenuItems 
+    : menuItems.filter(
+        (item) => !item.roles || item.roles.includes(session?.user?.role || '')
+      );
 
   const tenantName = session?.user?.tenantId 
     ? session.user.tenantId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
