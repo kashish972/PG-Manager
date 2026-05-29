@@ -77,6 +77,24 @@
   margin-top: 1rem;
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  color: #ccc;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e0e0e0;
+}
+
 .continueLink {
   display: inline-block;
   margin-top: 1.5rem;

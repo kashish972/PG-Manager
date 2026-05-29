@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { LayoutDashboard, TrendingUp, User, Users, Home, IndianRupee, Megaphone, Wrench, FileText, Briefcase, DoorOpen, Package, Settings, Sun, Moon, Smartphone, CreditCard, LogOut } from 'lucide-react';
+import { DownloadApk } from '@/components/ui/DownloadApk';
 import styles from './Sidebar.module.css';
 
 const menuItems = [
@@ -124,6 +126,7 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
             <span className={styles.userRole}>{session?.user?.role || 'Member'}</span>
           </div>
         </div>
+        {!Capacitor.isNativePlatform() && <DownloadApk />}
         <button onClick={() => signOut({ callbackUrl: '/login' })} className={styles.logoutBtn}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>

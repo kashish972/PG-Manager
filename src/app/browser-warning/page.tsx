@@ -3,6 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { AlertTriangle, ExternalLink, Globe } from 'lucide-react';
+import { DownloadApk } from '@/components/ui/DownloadApk';
 import styles from './page.module.css';
 
 function BrowserWarningContent() {
@@ -46,6 +47,16 @@ function BrowserWarningContent() {
           Simply copy the link from your browser&apos;s address bar and paste it into Chrome, Safari, or Edge.
         </p>
         
+        <div className={styles.divider}>
+          <span>OR</span>
+        </div>
+
+        <p className={styles.description}>
+          Download the PG Manager Android app for a native experience:
+        </p>
+
+        <DownloadApk variant="card" />
+
         {returnUrl && (
           <a href={returnUrl} className={styles.continueLink}>
             Continue anyway
