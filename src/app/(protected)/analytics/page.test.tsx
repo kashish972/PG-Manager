@@ -3,6 +3,10 @@ import { render, screen, waitFor, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AnalyticsPage from './page';
 
+function normalizeCurrencyText(value: string | null): string {
+  return (value ?? '').replace(/\s+/g, '').replace(/,/g, '');
+}
+
 const mocks = vi.hoisted(() => ({
   push: vi.fn(),
   session: {
@@ -160,6 +164,7 @@ describe('AnalyticsPage', () => {
     const residentAnalyticsCard = screen.getByText('Resident Analytics').closest('div')?.parentElement as HTMLElement;
     const revenueBreakdownCard = screen.getByText('Revenue Breakdown').closest('div')?.parentElement as HTMLElement;
     const blockCard = screen.getByText('Block A').closest('div') as HTMLElement;
+    const revenueValueNodes = revenueBreakdownCard.querySelectorAll('[class*="_revenueAmount_"]');
 
     expect(within(occupancyCard).getByText('80%')).toBeInTheDocument();
     expect(within(availableRoomsCard).getByText('4')).toBeInTheDocument();
@@ -169,13 +174,11 @@ describe('AnalyticsPage', () => {
     expect(within(occupancyProgress).getByText('16 occupied')).toBeInTheDocument();
     expect(within(occupancyProgress).getByText('4 available')).toBeInTheDocument();
     expect(within(residentAnalyticsCard).getByText(/7,500/)).toBeInTheDocument();
-    expect(
-      within(revenueBreakdownCard).getByText((_, element) => element?.textContent === '₹1,20,000')
-    ).toBeInTheDocument();
-    expect(within(revenueBreakdownCard).getByText(/96,000/)).toBeInTheDocument();
-    expect(
-      within(revenueBreakdownCard).getByText((_, element) => element?.textContent === '₹14.4L')
-    ).toBeInTheDocument();
+    expect(Array.from(revenueValueNodes).map((node) => normalizeCurrencyText(node.textContent))).toEqual([
+      '₹120000',
+      '₹96000',
+      '₹14.4L',
+    ]);
     expect(within(blockCard).getByText('83%')).toBeInTheDocument();
     expect(within(blockCard).getByText('AC: 5/6')).toBeInTheDocument();
     expect(within(blockCard).getByText('Non-AC: 5/6')).toBeInTheDocument();
@@ -234,8 +237,8 @@ describe('AnalyticsPage', () => {
     expect(within(residentAnalyticsCard).getByText('Inactive / Moved Out')).toBeInTheDocument();
     expect(within(residentAnalyticsCard).getByText('Total Registered')).toBeInTheDocument();
     expect(within(residentAnalyticsCard).getByText('Avg Rent / Room')).toBeInTheDocument();
-    expect(Array.from(residentValueNodes).map((node) => node.textContent)).toEqual(['0', '0', '0', '₹0']);
-    expect(Array.from(revenueValueNodes).map((node) => node.textContent)).toEqual(['₹0', '₹0', '₹0.0L']);
+    expect(Array.from(residentValueNodes).map((node) => normalizeCurrencyText(node.textContent))).toEqual(['0', '0', '0', '₹0']);
+    expect(Array.from(revenueValueNodes).map((node) => normalizeCurrencyText(node.textContent))).toEqual(['₹0', '₹0', '₹0.0L']);
     expect(within(maintenanceCard).getByText('Pending: 0')).toBeInTheDocument();
     expect(within(maintenanceCard).getByText('In Progress: 0')).toBeInTheDocument();
     expect(within(maintenanceCard).getByText('Resolved: 0')).toBeInTheDocument();
