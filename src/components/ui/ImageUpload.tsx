@@ -10,6 +10,7 @@ interface ImageUploadProps {
   label?: string;
   aspectRatio?: 'square' | 'video' | 'landscape';
   maxSize?: number;
+  uploadType?: string;
 }
 
 export function ImageUpload({ 
@@ -17,7 +18,8 @@ export function ImageUpload({
   onChange, 
   label = 'Upload Image',
   aspectRatio = 'square',
-  maxSize = 5 
+  maxSize = 5,
+  uploadType,
 }: ImageUploadProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -46,7 +48,7 @@ export function ImageUpload({
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('type', label.toLowerCase().includes('aadhar') ? 'aadhar' : 'photo');
+      formData.append('type', uploadType || (label.toLowerCase().includes('aadhar') ? 'aadhar' : 'photo'));
 
       const response = await fetch('/api/upload', {
         method: 'POST',

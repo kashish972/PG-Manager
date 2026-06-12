@@ -20,6 +20,7 @@ export async function middleware(request: NextRequest) {
     '/analytics',
     '/register',
     '/super-admin',
+    '/ai-settings',
   ];
 
   const isProtectedPath = protectedPaths.some((path) =>

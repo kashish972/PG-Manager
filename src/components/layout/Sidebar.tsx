@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
-import { LayoutDashboard, TrendingUp, User, Users, Home, IndianRupee, Megaphone, Wrench, FileText, Briefcase, DoorOpen, Package, Settings, Sun, Moon, Smartphone, CreditCard, LogOut } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, User, Users, Home, IndianRupee, Megaphone, Wrench, FileText, Briefcase, DoorOpen, Package, Settings, Sun, Moon, Smartphone, CreditCard, Sparkles, LogOut } from 'lucide-react';
 import { DownloadApk } from '@/components/ui/DownloadApk';
 import styles from './Sidebar.module.css';
 
@@ -28,6 +28,7 @@ const menuItems = [
   { href: '/reports', label: 'Reports', icon: FileText, roles: ['owner', 'admin'] },
   { href: '/upi-settings', label: 'UPI Settings', icon: Smartphone, roles: ['owner'] },
   { href: '/razorpay-settings', label: 'Razorpay Settings', icon: CreditCard, roles: ['owner'] },
+  { href: '/ai-settings', label: 'AI Assistant', icon: Sparkles, roles: ['owner'] },
 ];
 
 const superAdminMenuItems = [

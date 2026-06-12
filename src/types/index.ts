@@ -306,3 +306,29 @@ export interface CreateSalaryInput {
   paymentDate: Date;
   notes?: string;
 }
+
+export type AIProvider = 'gemini' | 'openrouter';
+
+export type AITone = 'professional' | 'friendly' | 'formal' | 'casual';
+
+export interface IAIBranding {
+  name: string;
+  welcomeMessage: string;
+  logo?: string;
+  primaryColor: string;
+  secondaryColor: string;
+  bubbleColor: string;
+  tone: AITone;
+}
+
+export interface IAISettings {
+  _id: ObjectId;
+  isEnabled: boolean;
+  provider: AIProvider;
+  apiKey: string;
+  branding: IAIBranding;
+  allowedDomains: string[];
+  model: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

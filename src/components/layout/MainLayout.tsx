@@ -2,11 +2,14 @@
 
 import { Sidebar } from './Sidebar';
 import { Breadcrumb } from './Breadcrumb';
+import { AiChatWidget } from '@/components/ai/AiChatWidget';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import styles from './MainLayout.module.css';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { data: session } = useSession();
 
   return (
     <div className={styles.layout}>
@@ -30,6 +33,11 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
       </main>
       {sidebarOpen && (
         <div className={styles.overlay} onClick={() => setSidebarOpen(false)} />
+      )}
+
+      {/* AI Chat Widget */}
+      {session?.user?.tenantId && (
+        <AiChatWidget tenantId={session.user.tenantId} />
       )}
     </div>
   );
