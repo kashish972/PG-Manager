@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'pg-manager',
   webDir: 'out',
   server: {
-    url: 'https://pg-manager-git-feat-version3-kashish-aroras-projects.vercel.app',
+    url: 'https://pg-manager-git-test-test-cases-githooks-kashish-aroras-projects.vercel.app',
     cleartext: false,
   },
 };

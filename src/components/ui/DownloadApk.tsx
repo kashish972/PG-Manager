@@ -8,7 +8,7 @@ interface DownloadApkProps {
 export function DownloadApk({ variant = 'sidebar' }: DownloadApkProps) {
   return (
     <a
-      href="/Pg-Manager.apk"
+      href="/PG-ManagerV2.apk"
       download
       className={`${styles.downloadBtn} ${styles[variant]}`}
     >
