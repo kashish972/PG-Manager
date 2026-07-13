@@ -54,10 +54,8 @@ const [blocks, setBlocks] = useState<any[]>([]);
   useEffect(() => {
     console.log('Loading blocks123333...');
     getBlocks().then(data => {
-      console.log('blocks data:', JSON.stringify(data));
       setBlocks(data || []);
       setIsLoaded(true);
-      console.log('blocks set:', data?.length);
     }).catch((err) => {
       console.log('blocks error:', err);
       setIsLoaded(true);

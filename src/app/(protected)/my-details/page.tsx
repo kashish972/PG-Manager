@@ -80,9 +80,14 @@ export default function MyDetailsPage() {
 
   useEffect(() => {
     if (session?.user?.email && session?.user?.role === 'member') {
-      getPersonByEmail(session.user.email).then(data => {
+      getPersonByEmail(session.user.email).then(async (data) => {
         setPerson(data);
         if (data?._id) {
+          // Auto-generate payments if they don't exist
+          try {
+            await fetch('/api/generate-payments', { method: 'POST' }).catch(() => {});
+          } catch (e) {}
+          
           return getPaymentsByPerson(data._id.toString());
         }
         return [];

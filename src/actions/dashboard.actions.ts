@@ -4,13 +4,15 @@ import { personRepository } from '@/repositories/person.repository';
 import { paymentRepository } from '@/repositories/payment.repository';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { getEffectiveTenantId } from '@/lib/tenant-context';
 import { DashboardStats } from '@/types';
 
 export async function getDashboardStats(): Promise<DashboardStats | null> {
   const session = await getServerSession(authOptions);
   if (!session?.user) return null;
   
-  const tenantId = session.user.tenantId;
+  const tenantId = await getEffectiveTenantId();
+  if (!tenantId) return null;
   
   const totalPersons = await personRepository.count(tenantId);
   const activePersons = await personRepository.countActive(tenantId);

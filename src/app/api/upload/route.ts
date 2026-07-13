@@ -25,7 +25,9 @@ export async function POST(request: NextRequest) {
       ? 'pg-manager/aadhar' 
       : type === 'photo' 
         ? 'pg-manager/photos' 
-        : 'pg-manager';
+        : type === 'ai-logo'
+          ? 'pg-manager/ai-logos'
+          : 'pg-manager';
 
     const result = await uploadImage(buffer, { folder });
 

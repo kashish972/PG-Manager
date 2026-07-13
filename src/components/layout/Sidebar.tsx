@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, TrendingUp, User, Users, Home, IndianRupee, Megaphone, Wrench, FileText, Briefcase, DoorOpen, Package, Settings, Sun, Moon, Smartphone, CreditCard, LogOut } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
+import { LayoutDashboard, TrendingUp, User, Users, Home, IndianRupee, Megaphone, Wrench, FileText, Briefcase, DoorOpen, Package, Settings, Sun, Moon, Smartphone, CreditCard, Sparkles, LogOut } from 'lucide-react';
+import { DownloadApk } from '@/components/ui/DownloadApk';
 import styles from './Sidebar.module.css';
 
 const menuItems = [
@@ -23,10 +25,25 @@ const menuItems = [
   { href: '/visitors', label: 'Visitors', icon: DoorOpen, roles: ['owner', 'admin'] },
   { href: '/inventory', label: 'Inventory', icon: Package, roles: ['owner', 'admin'] },
   { href: '/users', label: 'Users', icon: Settings, roles: ['owner', 'admin'] },
+  { href: '/reports', label: 'Reports', icon: FileText, roles: ['owner', 'admin'] },
   { href: '/upi-settings', label: 'UPI Settings', icon: Smartphone, roles: ['owner'] },
+  { href: '/razorpay-settings', label: 'Razorpay Settings', icon: CreditCard, roles: ['owner'] },
+  { href: '/ai-settings', label: 'AI Assistant', icon: Sparkles, roles: ['owner'] },
 ];
 
-export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
+const superAdminMenuItems = [
+  { href: '/super-admin/dashboard', label: 'All PGs', icon: LayoutDashboard },
+  { href: '/register', label: 'Create PG', icon: Home },
+];
+
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
+}
+
+export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: SidebarProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -46,9 +63,13 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
-  const filteredItems = menuItems.filter(
-    (item) => !item.roles || item.roles.includes(session?.user?.role || '')
-  );
+  const isSuperAdmin = session?.user?.role === 'superadmin';
+
+  const filteredItems = isSuperAdmin 
+    ? superAdminMenuItems 
+    : menuItems.filter(
+        (item) => !item.roles || item.roles.includes(session?.user?.role || '')
+      );
 
   const tenantName = session?.user?.tenantId 
     ? session.user.tenantId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
@@ -106,6 +127,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
             <span className={styles.userRole}>{session?.user?.role || 'Member'}</span>
           </div>
         </div>
+        {!Capacitor.isNativePlatform() && <DownloadApk />}
         <button onClick={() => signOut({ callbackUrl: '/login' })} className={styles.logoutBtn}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>

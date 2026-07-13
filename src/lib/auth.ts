@@ -41,13 +41,42 @@ export const authOptions: NextAuthOptions = {
         tenantId: { label: 'TenantId', type: 'text' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password || !credentials?.tenantId) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+
+        // Check if user is a super admin (no tenantId required)
+        if (!credentials.tenantId) {
+          const mainDb = await connectToMainDb();
+          const superAdmin = await mainDb.collection('users').findOne({ 
+            email: credentials.email, 
+            role: 'superadmin' 
+          });
+          
+          if (superAdmin) {
+            const isValid = await userRepository.verifyPassword(superAdmin as any, credentials.password);
+            if (isValid) {
+              return {
+                id: superAdmin._id.toString(),
+                email: superAdmin.email,
+                name: superAdmin.name,
+                role: superAdmin.role,
+                tenantId: '',
+              };
+            }
+          }
           return null;
         }
 
         const tenantId = credentials.tenantId.trim().toLowerCase().replace(/\s+/g, '-');
         
+        // Check if PG is suspended
         const mainDb = await connectToMainDb();
+        const pg = await mainDb.collection('pgs').findOne({ slug: tenantId });
+        if (pg && pg.status === 'suspended') {
+          throw new Error('This PG has been suspended. Contact your administrator.');
+        }
+        
         const mainUsers = await mainDb.collection('users').find({ email: credentials.email, tenantId }).toArray();
         
         for (const mainUser of mainUsers) {

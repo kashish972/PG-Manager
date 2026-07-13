@@ -200,6 +200,7 @@ export default function PaymentsPage() {
             <table className={styles.table}>
               <thead>
                 <tr>
+                  <th>Name</th>
                   <th>Month</th>
                   <th>Amount</th>
                   <th>Status</th>
@@ -213,12 +214,13 @@ export default function PaymentsPage() {
                   ?.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                   .map((payment: any) => (
                   <tr key={payment._id}>
+                    <td className={styles.name}>{getPersonName(payment.personId)}</td>
                     <td>
                       <button 
                         className={styles.viewLink}
                         onClick={() => handleViewPayment(payment)}
                       >
-                        {payment.month}
+                        {new Date(payment.paymentDate).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </button>
                     </td>
                     <td>₹{payment.amount}</td>
@@ -293,6 +295,18 @@ export default function PaymentsPage() {
                   <span className={styles.label}>Payment Method</span>
                   <span className={styles.value}>{selectedPayment.paymentMethod}</span>
                 </div>
+                {selectedPayment.paymentMethod === 'razorpay' && (
+                  <>
+                    <div className={styles.detailItem}>
+                      <span className={styles.label}>Razorpay Payment ID</span>
+                      <span className={styles.value}>{selectedPayment.razorpayPaymentId || 'N/A'}</span>
+                    </div>
+                    <div className={styles.detailItem}>
+                      <span className={styles.label}>Razorpay Order ID</span>
+                      <span className={styles.value}>{selectedPayment.razorpayOrderId || 'N/A'}</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className={styles.modalActions}>
